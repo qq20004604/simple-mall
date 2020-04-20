@@ -120,11 +120,13 @@ function Register (props) {
                    }}
                    maxLength={4}
                    rules={[{required: true, message: '请输入验证码'}]}>
-            <Input placeholder="请输入验证码"
+            <Input placeholder="应有验证码功能，因为是DEMO故禁用"
+                   disabled={true}
                    style={{
                        width: 300
                    }} value={verifyCode} onChange={e => setVerifyCode(e.target.value)}/>
             <Button type='primary'
+                    disabled={true}
                     style={{
                         float: 'right'
                     }}
