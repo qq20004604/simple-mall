@@ -4,7 +4,7 @@ import 'common/css/reset.css';
 import './style.scss';
 import 'antd/dist/antd.css';
 import $ajax from 'api/ajax.js';
-import {Layout, Menu, Breadcrumb} from 'antd';
+import {Layout, Menu, Breadcrumb, notification} from 'antd';
 import Login from './login';
 import Register from './register';
 
@@ -15,10 +15,20 @@ class Root extends React.Component {
         username: null,
 
         // 登录窗口是否打开
-        loginDialogShow: true,
+        loginDialogShow: false,
         // 登录窗口是否打开
         registerDialogShow: false
     };
+
+    componentDidMount () {
+        $ajax.had_logined().then(result => {
+            if (result.code === 200) {
+                this.setState({
+                    username: result.data.username
+                })
+            }
+        })
+    }
 
     render () {
         let LoginDom = null;
@@ -31,10 +41,10 @@ class Root extends React.Component {
                              key='reg'
                              onClick={() => this.setRegisterDialogDisplay(true)}>注册</a>
         } else {
-            RegisterDom = <a className={'reg-status'}
-                             key='logout'>
+            RegisterDom = <span className={'reg-status'}
+                                key='logout'>
                 你好，{this.state.username}！<a onClick={this.logout}>点击登出</a>
-            </a>
+            </span>
         }
 
         return <Layout>
@@ -85,8 +95,29 @@ class Root extends React.Component {
     }
 
     // 设置用户当前状态
-    setLoginStatus = () => {
+    setLoginStatus = (username) => {
+        this.setState({username})
+    }
 
+    // 登出
+    logout = () => {
+        $ajax.logout().then(result => {
+            if (result.code === 200) {
+                notification.success({
+                    message: '登出成功'
+                })
+            } else {
+                notification.error({
+                    message: result.msg
+                })
+            }
+        }).catch(() => {
+            notification.error({
+                message: '服务器错误'
+            })
+        }).finally(() => {
+            this.setState({username: null})
+        })
     }
 }
 

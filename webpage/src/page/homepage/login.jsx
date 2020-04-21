@@ -33,7 +33,11 @@ function Login (props) {
             //     }
             // }
             if (result.code === 200) {
-                setLoginStatus(result.data.username)
+                notification.success({
+                    message: '登录成功'
+                })
+                setLoginStatus(result.data.username);
+                setLoginDialogDisplay(false);
             }
         }).catch(() => {
             notification.error({

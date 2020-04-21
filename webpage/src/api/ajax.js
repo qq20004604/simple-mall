@@ -8,14 +8,20 @@
 import {get, post} from '../config/http';
 
 const $ajax = {
-    login (payload) {
-        return post('/login/', payload);
-    },
     sendVerifyCode (payload) {
         return post('/register/sendVerifyCode/', payload);
     },
     register (payload) {
         return post('/register/', payload);
+    },
+    login (payload) {
+        return post('/login/', payload);
+    },
+    had_logined () {
+        return post('/login/had_logined/');
+    },
+    logout () {
+        return post('/login/logout/');
     }
 };
 

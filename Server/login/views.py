@@ -6,7 +6,7 @@ from package.request_method_limit import post_limit
 from package.response_data import get_res_json
 from .forms import LoginForm
 from register.models import User
-from django.contrib.auth import authenticate, login
+from package.session_manage import is_logined, clear_session
 
 
 # Create your views here.
@@ -46,3 +46,24 @@ def login(request):
     request.session['username'] = search_result[0].username
     request.session['last_login_timestamp'] = search_result[0].last_login.timestamp()
     return get_res_json(code=200, msg='登录成功', data={'username': search_result[0].username})
+
+
+@my_csrf_decorator()
+@post_limit
+def had_logined(request):
+    if is_logined(request) is True:
+        return get_res_json(code=200, data={
+            'username': request.session.get('username')
+        })
+    else:
+        return get_res_json(code=0, msg='')
+
+
+@my_csrf_decorator()
+@post_limit
+def logout(request):
+    try:
+        clear_session(request)
+        return get_res_json(code=200)
+    except BaseException:
+        return get_res_json(code=0, msg='未知错误')

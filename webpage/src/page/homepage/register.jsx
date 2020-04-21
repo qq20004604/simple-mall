@@ -54,7 +54,11 @@ function Register (props) {
             //     }
             // }
             if (result.code === 200) {
-                // setLoginStatus(result.data.username)
+                notification.success({
+                    message: '注册成功'
+                })
+                setLoginStatus(result.data.username);
+                setRegisterDialogDisplay(false);
             } else {
                 notification.error({
                     message: result.msg
