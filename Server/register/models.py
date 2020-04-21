@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 # Create your models here.
@@ -9,7 +10,7 @@ class Register(models.Model):
         max_length=11,
         help_text='手机号码'
     )
-    name = models.CharField(
+    username = models.CharField(
         max_length=20,
         help_text='用户昵称（自大20位）'
     )

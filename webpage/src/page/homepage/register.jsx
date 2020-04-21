@@ -11,7 +11,7 @@ import $ajax from 'api/ajax.js';
 
 const {useState} = React;
 
-function Register (props) {
+function Register(props) {
     const {
         registerDialogShow,    // 窗口状态变量
         setRegisterDialogDisplay,  // 设置窗口是否显示
@@ -21,11 +21,19 @@ function Register (props) {
     const [username, setUsername] = useState('');
     const [verifyCode, setVerifyCode] = useState('');
     const [pw, setPW] = useState('');
+    const [rppw, setRpPW] = useState('');
     const [loading, setLoading] = useState(false);
     // 提交注册
     const handleOk = () => {
         console.log(tel, pw)
         setLoading(true);
+        if (pw !== rppw) {
+            notification.error({
+                message: '两次密码输入不同'
+            })
+            return;
+        }
+
         $ajax.register({
             tel, pw
         }).then(result => {
@@ -139,6 +147,12 @@ function Register (props) {
                        span: 3
                    }}>
             <Input.Password placeholder="请输入密码" value={pw} onChange={e => setPW(e.target.value)}/>
+        </Form.Item>
+        <Form.Item label="重复密码"
+                   labelCol={{
+                       span: 3
+                   }}>
+            <Input.Password placeholder="请输入密码" value={rppw} onChange={e => setRpPW(e.target.value)}/>
         </Form.Item>
     </Modal>
 }

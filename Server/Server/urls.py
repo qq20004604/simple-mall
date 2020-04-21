@@ -15,8 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings
 
 urlpatterns = [
     path('verify_code/', include('verify_code.urls')),
+    path('register/', include('register.urls')),
     path('admin/', admin.site.urls),
 ]
+
+# 如果是调试模式
+if settings.DEBUG:
+    test_urlpatterns = [
+        path('experiment/', include('experiment.urls')),
+    ]
+    urlpatterns.extend(test_urlpatterns)
