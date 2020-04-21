@@ -17,8 +17,8 @@ function Login (props) {
         setLoginDialogDisplay,  // 设置窗口是否显示
         setLoginStatus // 设置登录状态
     } = props;
-    const [tel, setTel] = useState('18258841073');
-    const [password, setPW] = useState('12345678');
+    const [tel, setTel] = useState('');
+    const [password, setPW] = useState('');
     const [loading, setLoading] = useState(false);
     const handleOk = () => {
         console.log(tel, password)

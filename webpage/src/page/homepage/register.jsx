@@ -17,12 +17,12 @@ function Register (props) {
         setRegisterDialogDisplay,  // 设置窗口是否显示
         setLoginStatus // 设置登录状态
     } = props;
-    const [tel, setTel] = useState('18258841073');
-    const [username, setUsername] = useState('测试');
+    const [tel, setTel] = useState('');
+    const [username, setUsername] = useState('');
     const [vcode, setVcode] = useState('');
-    const [password, setPassword] = useState('12345678');
-    const [rpPassword, setRpPassword] = useState('12345678');
-    const [usertype, setUsertype] = useState('01');
+    const [password, setPassword] = useState('');
+    const [rpPassword, setRpPassword] = useState('');
+    const [usertype, setUsertype] = useState('');
     const [loading, setLoading] = useState(false);
 
     // 提交注册
