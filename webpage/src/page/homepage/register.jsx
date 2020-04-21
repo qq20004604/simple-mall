@@ -6,36 +6,46 @@
  * 注册
  */
 import React from 'react';
-import {Modal, Button, Form, Input, notification} from 'antd';
+import {Modal, Button, Radio, Form, Input, notification} from 'antd';
 import $ajax from 'api/ajax.js';
 
 const {useState} = React;
 
-function Register(props) {
+function Register (props) {
     const {
         registerDialogShow,    // 窗口状态变量
         setRegisterDialogDisplay,  // 设置窗口是否显示
         setLoginStatus // 设置登录状态
     } = props;
-    const [tel, setTel] = useState('');
-    const [username, setUsername] = useState('');
-    const [verifyCode, setVerifyCode] = useState('');
-    const [pw, setPW] = useState('');
-    const [rppw, setRpPW] = useState('');
+    const [tel, setTel] = useState('18258841073');
+    const [username, setUsername] = useState('测试');
+    const [vcode, setVcode] = useState('');
+    const [password, setPassword] = useState('12345678');
+    const [rpPassword, setRpPassword] = useState('12345678');
+    const [usertype, setUsertype] = useState('01');
     const [loading, setLoading] = useState(false);
+
     // 提交注册
     const handleOk = () => {
-        console.log(tel, pw)
-        setLoading(true);
-        if (pw !== rppw) {
+        console.log({
+            tel, username, password, rpPassword, vcode, usertype
+        })
+        if (password !== rpPassword) {
             notification.error({
                 message: '两次密码输入不同'
             })
             return;
         }
+        if (!usertype) {
+            notification.error({
+                message: '请选择用户类型'
+            })
+            return;
+        }
 
+        setLoading(true);
         $ajax.register({
-            tel, pw
+            tel, username, password, vcode, usertype
         }).then(result => {
             // result = {
             //     code: 200,
@@ -45,6 +55,10 @@ function Register(props) {
             // }
             if (result.code === 200) {
                 // setLoginStatus(result.data.username)
+            } else {
+                notification.error({
+                    message: result.msg
+                })
             }
         }).catch(() => {
             notification.error({
@@ -75,9 +89,10 @@ function Register(props) {
             //     msg: '',
             //     data: null
             // }
+            console.log(result)
             if (result.code === 200) {
-                notification.info({
-                    message: '验证码已发送'
+                notification.success({
+                    message: result.msg
                 })
             } else {
                 notification.error({
@@ -98,15 +113,15 @@ function Register(props) {
         onCancel={handleCancel}
         footer={[
             <Button key="back" onClick={handleCancel}>
-                关闭
+                关闭窗口
             </Button>,
             <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-                登录
+                注册
             </Button>
         ]}>
         <Form.Item label="手机"
                    labelCol={{
-                       span: 3
+                       span: 4
                    }}
                    rules={[{required: true, message: '请输入手机号码（11位）'}]}>
             <Input placeholder="请输入手机号码（11位）"
@@ -116,7 +131,7 @@ function Register(props) {
         </Form.Item>
         <Form.Item label="用户名"
                    labelCol={{
-                       span: 3
+                       span: 4
                    }}
                    maxLength={20}
                    rules={[{required: true, message: '请输入用户名（2~20位）'}]}>
@@ -124,17 +139,17 @@ function Register(props) {
         </Form.Item>
         <Form.Item label="验证码"
                    labelCol={{
-                       span: 3
+                       span: 4
                    }}
                    maxLength={4}
                    rules={[{required: true, message: '请输入验证码'}]}>
-            <Input placeholder="应有验证码功能，因为是DEMO故禁用"
-                   disabled={true}
+            <Input placeholder="请输入验证码"
+                   disabled={false}
                    style={{
-                       width: 300
-                   }} value={verifyCode} onChange={e => setVerifyCode(e.target.value)}/>
+                       width: 250
+                   }} value={vcode} onChange={e => setVcode(e.target.value)}/>
             <Button type='primary'
-                    disabled={true}
+                    disabled={false}
                     style={{
                         float: 'right'
                     }}
@@ -144,15 +159,27 @@ function Register(props) {
         </Form.Item>
         <Form.Item label="密码"
                    labelCol={{
-                       span: 3
+                       span: 4
                    }}>
-            <Input.Password placeholder="请输入密码" value={pw} onChange={e => setPW(e.target.value)}/>
+            <Input.Password placeholder="请输入密码" value={password} onChange={e => setPassword(e.target.value)}/>
         </Form.Item>
         <Form.Item label="重复密码"
                    labelCol={{
-                       span: 3
+                       span: 4
                    }}>
-            <Input.Password placeholder="请输入密码" value={rppw} onChange={e => setRpPW(e.target.value)}/>
+            <Input.Password placeholder="请输入密码" value={rpPassword} onChange={e => setRpPassword(e.target.value)}/>
+        </Form.Item>
+        <Form.Item label="用户类型"
+                   labelCol={{
+                       span: 4
+                   }}>
+            <Radio.Group value={usertype}
+                         buttonStyle="solid"
+                         onChange={e => setUsertype(e.target.value)}>
+                <Radio.Button value="">未选择</Radio.Button>
+                <Radio.Button value="01">发单人</Radio.Button>
+                <Radio.Button value="02">接单人</Radio.Button>
+            </Radio.Group>
         </Form.Item>
     </Modal>
 }

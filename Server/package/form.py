@@ -8,7 +8,7 @@ import json
 class Form(forms.Form):
     def get_form_error_msg(self):
         error_json = json.loads(self.errors.as_json())
-        print(error_json)
+        # print(error_json)
         msg = ''
         for k in error_json:
             try:

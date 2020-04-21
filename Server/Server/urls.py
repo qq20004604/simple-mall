@@ -18,8 +18,8 @@ from django.urls import include, path
 from django.conf import settings
 
 urlpatterns = [
-    path('verify_code/', include('verify_code.urls')),
     path('register/', include('register.urls')),
+    path('login/', include('login.urls')),
     path('admin/', admin.site.urls),
 ]
 

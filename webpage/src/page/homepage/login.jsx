@@ -17,14 +17,14 @@ function Login (props) {
         setLoginDialogDisplay,  // 设置窗口是否显示
         setLoginStatus // 设置登录状态
     } = props;
-    const [tel, setTel] = useState('');
-    const [pw, setPW] = useState('');
+    const [tel, setTel] = useState('18258841073');
+    const [password, setPW] = useState('12345678');
     const [loading, setLoading] = useState(false);
     const handleOk = () => {
-        console.log(tel, pw)
+        console.log(tel, password)
         setLoading(true);
         $ajax.login({
-            tel, pw
+            tel, password
         }).then(result => {
             // result = {
             //     code: 200,
@@ -64,7 +64,7 @@ function Login (props) {
             <Input placeholder="请输入手机号码" value={tel} onChange={e => setTel(e.target.value)}/>
         </Form.Item>
         <Form.Item label="密码">
-            <Input.Password placeholder="请输入密码" value={pw} onChange={e => setPW(e.target.value)}/>
+            <Input.Password placeholder="请输入密码" value={password} onChange={e => setPW(e.target.value)}/>
         </Form.Item>
     </Modal>
 }

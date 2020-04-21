@@ -9,13 +9,13 @@ import {get, post} from '../config/http';
 
 const $ajax = {
     login (payload) {
-        return post('./login', payload);
+        return post('/login/', payload);
     },
     sendVerifyCode (payload) {
-        return post('./sendVerifyCode', payload);
+        return post('/register/sendVerifyCode/', payload);
     },
     register (payload) {
-        return post('./register', payload);
+        return post('/register/', payload);
     }
 };
 

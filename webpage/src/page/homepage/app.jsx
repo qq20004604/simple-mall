@@ -15,9 +15,9 @@ class Root extends React.Component {
         username: null,
 
         // 登录窗口是否打开
-        loginDialogShow: false,
+        loginDialogShow: true,
         // 登录窗口是否打开
-        registerDialogShow: true
+        registerDialogShow: false
     };
 
     render () {

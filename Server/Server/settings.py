@@ -24,13 +24,15 @@ SECRET_KEY = '+z-c)r%62_h%a%pwbs5$c*=z1ie&$lzt0d2wsppgrbodfu#5dn'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1'
+]
 
 # Application definition
 
 INSTALLED_APPS = [
     'register.apps.RegisterConfig',
-    'verify_code.apps.VerifyCodeConfig',
+    'login.apps.LoginConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
