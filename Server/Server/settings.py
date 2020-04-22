@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'register.apps.RegisterConfig',
     'login.apps.LoginConfig',
+    'orders.apps.OrdersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
