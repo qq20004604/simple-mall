@@ -1,8 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import time
 from configuration.variable import LOGIN_EXPIRE_TIME
 from django.utils import timezone
+
+
+# 设置登录状态
+# 参数2是User model的一条数据
+def set_user_session(request, user):
+    request.session['id'] = user.id
+    request.session['username'] = user.username
+    request.session['last_login_timestamp'] = user.last_login.timestamp()
+    request.session['usertype'] = user.usertype
+
+
+# 清除登录状态
+def clear_session(request):
+    del request.session['id']
+    del request.session['username']
+    del request.session['last_login_timestamp']
+    del request.session['usertype']
 
 
 # 登录是否过期
@@ -12,13 +28,6 @@ def was_expired(request):
         return True
     else:
         return False
-
-
-# 清除登录状态
-def clear_session(request):
-    del request.session['id']
-    del request.session['username']
-    del request.session['last_login_timestamp']
 
 
 # 当前是否登录中

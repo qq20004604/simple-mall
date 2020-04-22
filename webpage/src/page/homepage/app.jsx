@@ -13,6 +13,7 @@ const {Header, Content, Footer} = Layout;
 class Root extends React.Component {
     state = {
         username: null,
+        usertype: null,
 
         // 登录窗口是否打开
         loginDialogShow: false,
@@ -20,7 +21,7 @@ class Root extends React.Component {
         registerDialogShow: false
     };
 
-    componentDidMount () {
+    componentDidMount() {
         $ajax.had_logined().then(result => {
             if (result.code === 200) {
                 this.setState({
@@ -30,7 +31,7 @@ class Root extends React.Component {
         })
     }
 
-    render () {
+    render() {
         let LoginDom = null;
         let RegisterDom = null;
         if (this.state.username === null) {
@@ -95,8 +96,8 @@ class Root extends React.Component {
     }
 
     // 设置用户当前状态
-    setLoginStatus = (username) => {
-        this.setState({username})
+    setLoginStatus = (data) => {
+        this.setState({username: data.username, usertype: data.usertype})
     }
 
     // 登出
@@ -116,7 +117,7 @@ class Root extends React.Component {
                 message: '服务器错误'
             })
         }).finally(() => {
-            this.setState({username: null})
+            this.setState({username: null, usertype: null})
         })
     }
 }

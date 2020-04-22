@@ -1,7 +1,3 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-import requests
-import random
 import json
 from package.decorator_csrf_setting import my_csrf_decorator
 from package.request_method_limit import post_limit
@@ -10,7 +6,7 @@ from .forms import VerifyCodeForm, RegisterForm
 from package.send_sms import send_vcode_sms
 from register.models import TelVerifyCode, User
 from configuration.variable import SMS_SEND_INTERVAL_TIME
-from django.contrib.auth import authenticate, login
+from package.session_manage import set_user_session
 
 
 # Create your views here.
@@ -107,7 +103,8 @@ def reg(request):
     new_user = User.objects.create(username=username, tel=tel, password=password, usertype=usertype)
     new_user.save()
     # 同时设置为登录
-    request.session['id'] = new_user.id
-    request.session['username'] = new_user.username
-    request.session['last_login_timestamp'] = new_user.last_login.timestamp()
-    return get_res_json(code=200, msg='注册成功', data={'username': username})
+    set_user_session(request, new_user)
+    return get_res_json(code=200, msg='注册成功', data={
+        'username': username,
+        'usertype': usertype
+    })

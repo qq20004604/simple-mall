@@ -6,7 +6,7 @@ from package.request_method_limit import post_limit
 from package.response_data import get_res_json
 from .forms import LoginForm
 from register.models import User
-from package.session_manage import is_logined, clear_session
+from package.session_manage import is_logined, clear_session, set_user_session
 
 
 # Create your views here.
@@ -42,10 +42,11 @@ def login(request):
     search_result[0].set_last_login()
     search_result[0].save()
     # 同时设置为登录
-    request.session['id'] = search_result[0].id
-    request.session['username'] = search_result[0].username
-    request.session['last_login_timestamp'] = search_result[0].last_login.timestamp()
-    return get_res_json(code=200, msg='登录成功', data={'username': search_result[0].username})
+    set_user_session(request, search_result[0])
+    return get_res_json(code=200, msg='登录成功', data={
+        'username': search_result[0].username,
+        'usertype': search_result[0].usertype
+    })
 
 
 @my_csrf_decorator()

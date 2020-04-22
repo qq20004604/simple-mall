@@ -57,7 +57,7 @@ function Register (props) {
                 notification.success({
                     message: '注册成功'
                 })
-                setLoginStatus(result.data.username);
+                setLoginStatus(result.data);
                 setRegisterDialogDisplay(false);
             } else {
                 notification.error({
