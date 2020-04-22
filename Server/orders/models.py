@@ -9,7 +9,7 @@ import random
 class Order(models.Model):
     send_date = models.DateTimeField(
         default=timezone.now,
-        help_text='订单发布时间'
+        help_text='订单创建时间'
     )
     pub_user_id = models.CharField(
         max_length=20,
@@ -33,15 +33,56 @@ class Order(models.Model):
         max_length=20,
         help_text='订单预期价格'
     )
-    order_taker = models.CharField(
-        max_length=20,
-        help_text='订单接单人id'
-    )
     candidate_order_taker = models.CharField(
         default='',
         max_length=255,
         help_text='候选订单接单人id，以逗号分隔用户id。最多10个人'
     )
+    order_taker = models.CharField(
+        max_length=20,
+        help_text='订单接单人id'
+    )
+    order_set_taker_date = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text='选定接单人时间，状态切换为11时，赋值这个时间'
+    )
+    order_begin_doing_date = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text='接单方确认开始时间，状态切换为20时，赋值这个时间'
+    )
+    order_done_by_taker_date = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text='接单方确认完成时间，状态切换为21时，赋值这个时间'
+    )
+    order_done_by_pub_date = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text='发单方确认完成时间，状态切换为22时，赋值这个时间'
+    )
+    order_scored_by_taker_date = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text='接单方评价时间，状态切换为31时，赋值这个时间'
+    )
+    order_scored_by_pub_date = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text='发单方评价时间，状态切换为32时，赋值这个时间'
+    )
+    order_canceled_by_taker_date = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text='接单方取消订单时间，状态切换为91时，赋值这个时间'
+    )
+    order_canceled_by_pub_date = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text='发单方取消订单时间，状态切换为92时，赋值这个时间'
+    )
+
     pub_score_taker = models.CharField(
         max_length=1,
         help_text='发单方给接单方打分，1~5分打分，5分好评'
@@ -83,7 +124,7 @@ class Order(models.Model):
 
     # 显示的默认信息
     def __str__(self):
-        return self.tel
+        return self.title
 
     # 获得订单中文状态
     def get_order_status_cn(self):
@@ -141,6 +182,7 @@ class Order(models.Model):
             self.candidate_order_taker = ''
             # 选定接单人
             self.order_taker = user_id
+            self.order_set_taker_date = timezone.now()
             return True
         else:
             return '该用户不在接单人候选列表'
@@ -152,6 +194,7 @@ class Order(models.Model):
         if self.order_taker != change_user_id:
             return '只有接单人才能将订单状态改为进行中'
         self.order_status = '20'
+        self.order_begin_doing_date = timezone.now()
         return True
 
     # 设置订单状态（接单方确认完成21）
@@ -160,9 +203,11 @@ class Order(models.Model):
         if self.order_taker == change_user_id:
             if self.order_status == '20':
                 self.order_status = '21'
+                self.order_done_by_taker_date = timezone.now()
                 return True
             elif self.order_status == '22':
                 self.order_status = '30'
+                self.order_done_by_taker_date = timezone.now()
                 return True
             else:
                 return '无法修改该订单状态'
@@ -175,9 +220,11 @@ class Order(models.Model):
         if self.pub_user_id == change_user_id:
             if self.order_status == '20':
                 self.order_status = '22'
+                self.order_done_by_pub_date = timezone.now()
                 return True
             elif self.order_status == '21':
                 self.order_status = '30'
+                self.order_done_by_pub_date = timezone.now()
                 return True
             else:
                 return '无法修改该订单状态'
@@ -192,11 +239,13 @@ class Order(models.Model):
                 self.order_status = '31'
                 self.taker_score_pub = score
                 self.taker_score_pub_des = score_content
+                self.order_scored_by_taker_date = timezone.now()
                 return True
             elif self.order_status == '32':
                 self.order_status = '40'
                 self.taker_score_pub = score
                 self.taker_score_pub_des = score_content
+                self.order_scored_by_taker_date = timezone.now()
                 return True
             else:
                 return '该订单当前状态无法评价'
@@ -211,11 +260,13 @@ class Order(models.Model):
                 self.order_status = '32'
                 self.pub_score_taker = score
                 self.pub_score_taker_des = score_content
+                self.order_scored_by_pub_date = timezone.now()
                 return True
             elif self.order_status == '31':
                 self.order_status = '40'
                 self.pub_score_taker = score
                 self.pub_score_taker_des = score_content
+                self.order_scored_by_pub_date = timezone.now()
                 return True
             else:
                 return '该订单当前状态无法评价'
@@ -230,6 +281,7 @@ class Order(models.Model):
             # 订单开始后>=20，订单完成前<30，才能修改
             if 20 <= s < 30:
                 self.order_status = '91'
+                self.order_canceled_by_taker_date = timezone.now()
                 return True
             else:
                 return '该订单当前状态无法取消'
@@ -244,6 +296,7 @@ class Order(models.Model):
             # 订单开始后>=20，订单完成前<30，才能修改
             if 20 <= s < 30:
                 self.order_status = '91'
+                self.order_canceled_by_pub_date = timezone.now()
                 return True
             else:
                 return '该订单当前状态无法取消'

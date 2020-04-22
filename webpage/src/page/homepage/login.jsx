@@ -11,7 +11,7 @@ import $ajax from 'api/ajax.js';
 
 const {useState} = React;
 
-function Login(props) {
+function Login (props) {
     const {
         loginDialogShow,    // 窗口状态变量
         setLoginDialogDisplay,  // 设置窗口是否显示

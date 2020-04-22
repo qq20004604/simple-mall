@@ -22,6 +22,9 @@ const $ajax = {
     },
     logout () {
         return post('/login/logout/');
+    },
+    orderCreate (payload) {
+        return post('/orders/create/', payload);
     }
 };
 

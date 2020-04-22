@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 import datetime
-from configuration.variable import VERIFY_CODE_EXPIRE_TIME, SMS_SEND_INTERVAL_TIME
+from configuration.variable import VERIFY_CODE_EXPIRE_TIME, SMS_SEND_INTERVAL_TIME, USERTYPE_PUB, USERTYPE_ORDER_TAKER
 import random
 
 
@@ -52,7 +52,7 @@ class User(models.Model):
     usertype = models.CharField(
         default='',
         max_length=2,
-        help_text='用户类型（01发布人，02接单人）'
+        help_text='用户类型（01发布人，02接单人）'  # 具体的值取 USERTYPE_PUB 和 USERTYPE_ORDER_TAKER
     )
 
     register_date = models.DateTimeField(default=timezone.now)
@@ -66,11 +66,11 @@ class User(models.Model):
 
     # 是否是发布者
     def is_pub_user(self):
-        return self.usertype == '01'
+        return self.usertype == USERTYPE_PUB
 
     # 是否是接单人
     def is_order_user(self):
-        return self.usertype == '02'
+        return self.usertype == USERTYPE_ORDER_TAKER
 
     # 修改最后登录时间
     def set_last_login(self):

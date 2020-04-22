@@ -20,12 +20,13 @@ from django.conf import settings
 urlpatterns = [
     path('register/', include('register.urls')),
     path('login/', include('login.urls')),
-    path('admin/', admin.site.urls),
+    path('orders/', include('orders.urls')),
 ]
 
 # 如果是调试模式
 if settings.DEBUG:
     test_urlpatterns = [
         path('experiment/', include('experiment.urls')),
+        path('admin/', admin.site.urls),
     ]
     urlpatterns.extend(test_urlpatterns)

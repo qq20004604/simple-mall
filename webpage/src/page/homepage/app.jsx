@@ -7,13 +7,21 @@ import $ajax from 'api/ajax.js';
 import {Layout, Menu, Breadcrumb, notification} from 'antd';
 import Login from './login';
 import Register from './register';
+import CreateOrder from './create_order'
 
 const {Header, Content, Footer} = Layout;
+
+const USER_TYPE_PUB = '01'
+// 标签：
+const TAB_ORDER_LIST = '00' // 订单列表
+const TAB_CREATE_ORDER = '01'   // 创建订单
 
 class Root extends React.Component {
     state = {
         username: null,
         usertype: null,
+
+        tab: TAB_ORDER_LIST,
 
         // 登录窗口是否打开
         loginDialogShow: false,
@@ -21,17 +29,18 @@ class Root extends React.Component {
         registerDialogShow: false
     };
 
-    componentDidMount() {
+    componentDidMount () {
         $ajax.had_logined().then(result => {
             if (result.code === 200) {
                 this.setState({
-                    username: result.data.username
+                    username: result.data.username,
+                    usertype: result.data.usertype
                 })
             }
         })
     }
 
-    render() {
+    render () {
         let LoginDom = null;
         let RegisterDom = null;
         if (this.state.username === null) {
@@ -51,8 +60,17 @@ class Root extends React.Component {
         return <Layout>
             <Header style={{position: 'fixed', zIndex: 1, width: '100%'}}
                     id='header'>
-                <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
-                    <Menu.Item key="1">订单列表</Menu.Item>
+                <Menu theme="dark"
+                      mode="horizontal"
+                      defaultSelectedKeys={TAB_ORDER_LIST}
+                      onSelect={this.onTabChange}>
+                    <Menu.Item key={TAB_ORDER_LIST}>订单列表</Menu.Item>
+                    {
+                        this.state.usertype === USER_TYPE_PUB
+                            ? <Menu.Item key={TAB_CREATE_ORDER}>发布订单</Menu.Item>
+                            : null
+                    }
+
                     <React.Fragment>
                         {
                             [LoginDom, RegisterDom]
@@ -62,12 +80,18 @@ class Root extends React.Component {
             </Header>
             <Content className="site-layout" style={{padding: '0 50px', marginTop: 64}}>
                 <Breadcrumb style={{margin: '16px 0'}}>
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item>List</Breadcrumb.Item>
-                    <Breadcrumb.Item>App</Breadcrumb.Item>
+                    <Breadcrumb.Item>首页</Breadcrumb.Item>
+                    {
+                        this.state.tab === TAB_ORDER_LIST ? <Breadcrumb.Item>订单列表</Breadcrumb.Item> : null
+                    }
+                    {
+                        this.state.tab === TAB_CREATE_ORDER ? <Breadcrumb.Item>创建订单</Breadcrumb.Item> : null
+                    }
                 </Breadcrumb>
                 <div className="site-layout-background" style={{padding: 24, minHeight: 380}}>
-                    Content
+                    {
+                        this.state.tab === TAB_CREATE_ORDER ? <CreateOrder usertype={this.state.usertype}/> : null
+                    }
                 </div>
             </Content>
             <Footer style={{textAlign: 'center'}}>开发人：零零水（QQ：20004604，微信：qq20004604）</Footer>
@@ -118,6 +142,15 @@ class Root extends React.Component {
             })
         }).finally(() => {
             this.setState({username: null, usertype: null})
+        })
+    }
+
+    // 当tab更改时
+    onTabChange = (tabObj) => {
+        console.log(tabObj)
+        const {key} = tabObj;
+        this.setState({
+            tab: key
         })
     }
 }

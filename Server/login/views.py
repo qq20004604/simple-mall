@@ -54,7 +54,8 @@ def login(request):
 def had_logined(request):
     if is_logined(request) is True:
         return get_res_json(code=200, data={
-            'username': request.session.get('username')
+            'username': request.session.get('username'),
+            'usertype': request.session.get('usertype'),
         })
     else:
         return get_res_json(code=0, msg='')
