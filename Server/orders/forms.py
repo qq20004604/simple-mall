@@ -43,7 +43,7 @@ class CreateOrderForm(Form):
 
 
 # 获取订单列表（默认订单列表，分页查询）
-class GetOrderListByAllForm(Form):
+class GetOrderListForm(Form):
     # 查询第几页，第1页的则传1
     page_num = forms.IntegerField(min_value=1,
                                   max_value=10000,
@@ -57,7 +57,7 @@ class GetOrderListByAllForm(Form):
 
 
 # 获取订单列表（默认订单列表，分页查询）
-class GetOrderDetailPublicForm(Form):
+class GetOrderDetailForm(Form):
     # 查询第几页，第1页的则传1
     id = forms.IntegerField(min_value=1,
                             required=True,

@@ -9,20 +9,28 @@ import Login from './login';
 import Register from './register';
 import CreateOrder from './create_order'
 import OrderList from './order_list'
+import OrderListSelf from './order_list_self';
 
-const {Header, Content, Footer} = Layout;
+const {Header, Footer} = Layout;
 
 const USER_TYPE_PUB = '01'
 // 标签：
 const TAB_ORDER_LIST = '00' // 订单列表
 const TAB_CREATE_ORDER = '01'   // 创建订单
+const TAB_MY_ORDER_LIST = '02'   // 我的订单
+
+let DefaultTab = TAB_ORDER_LIST
+// 如果初始找不到这个字段，则默认是订单列表
+if (!window.localStorage.currentTab) {
+    window.localStorage.currentTab = TAB_ORDER_LIST
+}
 
 class Root extends React.Component {
     state = {
         username: null,
         usertype: null,
 
-        tab: TAB_ORDER_LIST,
+        tab: window.localStorage.currentTab,
 
         // 登录窗口是否打开
         loginDialogShow: false,
@@ -39,6 +47,7 @@ class Root extends React.Component {
                 })
             }
         })
+        window.test = this;
     }
 
     render () {
@@ -63,12 +72,17 @@ class Root extends React.Component {
                     id='header'>
                 <Menu theme="dark"
                       mode="horizontal"
-                      defaultSelectedKeys={TAB_ORDER_LIST}
+                      selectedKeys={this.state.tab}
                       onSelect={this.onTabChange}>
                     <Menu.Item key={TAB_ORDER_LIST}>订单列表</Menu.Item>
                     {
                         this.state.usertype === USER_TYPE_PUB
                             ? <Menu.Item key={TAB_CREATE_ORDER}>发布订单</Menu.Item>
+                            : null
+                    }
+                    {
+                        this.state.usertype !== null
+                            ? <Menu.Item key={TAB_MY_ORDER_LIST}>我的订单</Menu.Item>
                             : null
                     }
 
@@ -84,6 +98,9 @@ class Root extends React.Component {
             }
             {
                 this.state.tab === TAB_CREATE_ORDER ? <CreateOrder usertype={this.state.usertype}/> : null
+            }
+            {
+                this.state.tab === TAB_MY_ORDER_LIST ? <OrderListSelf/> : null
             }
             <Footer style={{textAlign: 'center'}}>开发人：零零水（QQ：20004604，微信：qq20004604）</Footer>
 
@@ -140,6 +157,7 @@ class Root extends React.Component {
     onTabChange = (tabObj) => {
         console.log(tabObj)
         const {key} = tabObj;
+        window.localStorage.currentTab = key
         this.setState({
             tab: key
         })

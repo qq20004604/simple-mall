@@ -31,6 +31,12 @@ const $ajax = {
     },
     orderDetailPublic (payload) {
         return post('/orders/detail/public/', payload);
+    },
+    orderListSelf (payload) {
+        return post('/orders/list/self/', payload);
+    },
+    orderDetailPrivate (payload) {
+        return post('/orders/detail/private/', payload);
     }
 };
 

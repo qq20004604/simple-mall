@@ -1,12 +1,5 @@
 /**
- * Created by 王冬 on 2020/4/23.
- * QQ: 20004604
- * weChat: qq20004604
- * 功能说明：
- *
- */
-/**
- * Created by 王冬 on 2020/4/22.
+ * Created by 王冬 on 2020/4/24.
  * QQ: 20004604
  * weChat: qq20004604
  * 功能说明：
@@ -22,17 +15,17 @@ import {
     Pagination,
     Tag, Breadcrumb, Layout
 } from 'antd';
-import OrderDetail from './order_detail';
+import OrderDetailSelf from './order_detail_self';
 import {HomeOutlined, UserOutlined} from '@ant-design/icons';
 import $ajax from 'api/ajax.js';
 
 const {Content} = Layout;
 
-function OrderList (props) {
+function OrderListSelf () {
     const [list, setList] = useState([]);
     const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState(0)
-    const [detailId, setDetailId] = useState(null);
+    const [detailId, setDetailId] = useState(7);
 
     useEffect(() => loadList(), []);
 
@@ -40,7 +33,7 @@ function OrderList (props) {
         const payload = {
             page_num: page
         }
-        $ajax.orderList(payload).then(result => {
+        $ajax.orderListSelf(payload).then(result => {
             // result = {
             //     code: 200,
             //     msg: '',
@@ -75,7 +68,7 @@ function OrderList (props) {
     const ListDOM = <div id='order-list'>
         <PageHeader
             className="site-page-header"
-            title="订单列表"/>
+            title="我的订单"/>
         <div className='list'>
             <Row gutter={[32, 24]}>
                 {
@@ -125,7 +118,7 @@ function OrderList (props) {
                 <HomeOutlined/>
             </Breadcrumb.Item>
             <Breadcrumb.Item>
-                <a onClick={() => setDetailId(null)}>订单列表</a>
+                <a onClick={() => setDetailId(null)}>我的订单</a>
             </Breadcrumb.Item>
             {
                 detailId !== null ? <Breadcrumb.Item>订单详情</Breadcrumb.Item> : null
@@ -134,11 +127,11 @@ function OrderList (props) {
         </Breadcrumb>
         <div className="site-layout-background" style={{padding: 24, minHeight: 380}}>
             {
-                detailId === null ? ListDOM : <OrderDetail id={detailId}
-                                                           setDetailId={setDetailId}/>
+                detailId === null ? ListDOM : <OrderDetailSelf id={detailId}
+                                                               setDetailId={setDetailId}/>
             }
         </div>
     </Content>
 }
 
-export default OrderList
+export default OrderListSelf

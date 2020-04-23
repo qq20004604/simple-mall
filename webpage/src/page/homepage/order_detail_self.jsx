@@ -9,7 +9,7 @@ import React, {useEffect, useState} from 'react';
 import {PageHeader, notification, Descriptions, Badge, Tag} from 'antd';
 import $ajax from 'api/ajax.js';
 
-function OrderDetail (props) {
+function OrderDetailSelf (props) {
     const {id, setDetailId} = props;
     useEffect(() => loadDetail(), []);
     const [orderDetail, setOrderDetail] = useState({
@@ -28,7 +28,7 @@ function OrderDetail (props) {
     })
 
     const loadDetail = () => {
-        $ajax.orderDetailPublic({id}).then(result => {
+        $ajax.orderDetailPrivate({id}).then(result => {
             // result = {
             //     code: 200,
             //     msg: '',
@@ -78,11 +78,24 @@ function OrderDetail (props) {
                         : '尚无人接单'
                 }
             </Descriptions.Item>
-            <Descriptions.Item label="订单描述">
+            <Descriptions.Item label="订单描述" span={3}>
                 {orderDetail.content}
             </Descriptions.Item>
+            <Descriptions.Item label="接单人">{orderDetail.order_taker_username}</Descriptions.Item>
+            <Descriptions.Item label="选定接单人时间">{orderDetail.order_set_taker_date}</Descriptions.Item>
+            <Descriptions.Item label="接单方确认开始时间">{orderDetail.order_begin_doing_date}</Descriptions.Item>
+            <Descriptions.Item label="接单方确认完成时间">{orderDetail.order_done_by_taker_date}</Descriptions.Item>
+            <Descriptions.Item label="发单方确认完成时间" span={2}>{orderDetail.order_done_by_pub_date}</Descriptions.Item>
+            <Descriptions.Item label="接单方评价时间">{orderDetail.order_scored_by_taker_date}</Descriptions.Item>
+            <Descriptions.Item label="发单方评价时间" span={2}>{orderDetail.order_scored_by_pub_date}</Descriptions.Item>
+            <Descriptions.Item label="接单方取消订单时间">{orderDetail.order_canceled_by_taker_date}</Descriptions.Item>
+            <Descriptions.Item label="发单方取消订单时间" span={2}>{orderDetail.order_canceled_by_pub_date}</Descriptions.Item>
+            <Descriptions.Item label="接单方打分">{orderDetail.taker_score_pub}</Descriptions.Item>
+            <Descriptions.Item label="发单方打分" span={2}>{orderDetail.pub_score_taker}</Descriptions.Item>
+            <Descriptions.Item label="接单方评价内容" span={3}>{orderDetail.taker_score_pub_des}</Descriptions.Item>
+            <Descriptions.Item label="发单方评价内容" span={3}>{orderDetail.pub_score_taker_des}</Descriptions.Item>
         </Descriptions>
     </div>
 }
 
-export default OrderDetail
+export default OrderDetailSelf
