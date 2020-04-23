@@ -8,6 +8,7 @@ import {Layout, Menu, Breadcrumb, notification} from 'antd';
 import Login from './login';
 import Register from './register';
 import CreateOrder from './create_order'
+import OrderList from './order_list'
 
 const {Header, Content, Footer} = Layout;
 
@@ -89,6 +90,9 @@ class Root extends React.Component {
                     }
                 </Breadcrumb>
                 <div className="site-layout-background" style={{padding: 24, minHeight: 380}}>
+                    {
+                        this.state.tab === TAB_ORDER_LIST ? <OrderList usertype={this.state.usertype}/> : null
+                    }
                     {
                         this.state.tab === TAB_CREATE_ORDER ? <CreateOrder usertype={this.state.usertype}/> : null
                     }

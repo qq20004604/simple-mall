@@ -21,7 +21,17 @@ function Login (props) {
     const [password, setPW] = useState('');
     const [loading, setLoading] = useState(false);
     const handleOk = () => {
-        console.log(tel, password)
+        if (!tel) {
+            return notification.error({
+                message: '请填写手机号码'
+            })
+        }
+        if (!password) {
+            return notification.error({
+                message: '请填写密码'
+            })
+        }
+
         setLoading(true);
         $ajax.login({
             tel, password
@@ -38,6 +48,10 @@ function Login (props) {
                 })
                 setLoginStatus(result.data);
                 setLoginDialogDisplay(false);
+            } else {
+                notification.error({
+                    message: result.msg
+                })
             }
         }).catch(() => {
             notification.error({
@@ -68,7 +82,14 @@ function Login (props) {
             <Input placeholder="请输入手机号码" value={tel} onChange={e => setTel(e.target.value)}/>
         </Form.Item>
         <Form.Item label="密码">
-            <Input.Password placeholder="请输入密码" value={password} onChange={e => setPW(e.target.value)}/>
+            <Input.Password placeholder="请输入密码"
+                            value={password}
+                            onChange={e => setPW(e.target.value)}
+                            onKeyUp={e => {
+                                if (e.keyCode === 13) {
+                                    handleOk()
+                                }
+                            }}/>
         </Form.Item>
     </Modal>
 }

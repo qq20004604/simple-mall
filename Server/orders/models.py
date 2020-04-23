@@ -7,7 +7,7 @@ import random
 
 # Create your models here.
 class Order(models.Model):
-    send_date = models.DateTimeField(
+    create_date = models.DateTimeField(
         default=timezone.now,
         help_text='订单创建时间'
     )

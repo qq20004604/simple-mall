@@ -25,6 +25,9 @@ const $ajax = {
     },
     orderCreate (payload) {
         return post('/orders/create/', payload);
+    },
+    orderList (payload) {
+        return post('/orders/list/all/', payload);
     }
 };
 

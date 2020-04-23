@@ -4,7 +4,7 @@ from package.form import Form, forms
 from django.core.validators import RegexValidator
 
 
-# 验证码表单
+# 创建订单
 class CreateOrderForm(Form):
     title = forms.CharField(min_length=4,
                             max_length=40,
@@ -40,3 +40,17 @@ class CreateOrderForm(Form):
                                 'max_length': '【订单预期价格】长度应少于20个字',
                             }
                             )
+
+
+# 获取订单列表（默认订单列表，分页查询）
+class GetOrderListByAllForm(Form):
+    # 查询第几页，第1页的则传1
+    page_num = forms.IntegerField(min_value=1,
+                                  max_value=10000,
+                                  required=True,
+                                  error_messages={
+                                      'required': '你没有填写【页码】',
+                                      'min_value': '【页码】数值错误',
+                                      'max_value': '【页码】数值错误',
+                                  }
+                                  )

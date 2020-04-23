@@ -19,3 +19,25 @@
         float: right;
     }
 }
+
+
+#order-list {
+    .list {
+        padding-bottom: 20px;
+
+        .create-date {
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .price {
+            float: right;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .content {
+            font-size: 16px;
+        }
+    }
+}
