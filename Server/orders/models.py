@@ -21,7 +21,7 @@ class Order(models.Model):
     )
     content = models.CharField(
         max_length=2000,
-        help_text='订单内容'
+        help_text='订单描述'
     )
     tag = models.CharField(
         default='',

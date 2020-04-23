@@ -2,7 +2,7 @@ import json
 from package.decorator_csrf_setting import my_csrf_decorator
 from package.request_method_limit import post_limit, pub_limit
 from package.response_data import get_res_json
-from .forms import CreateOrderForm, GetOrderListByAllForm
+from .forms import CreateOrderForm, GetOrderListByAllForm, GetOrderDetailPublicForm
 from .models import Order
 from register.models import User
 from django.db.models import Q
@@ -90,9 +90,9 @@ def get_order_list_all(request):
             "pub_user_id": item.pub_user_id,  # 订单发布人的id
             "pub_username": get_order_list_all_item(item, 'pub_username'),  # 订单发布人的username
             "title": item.title,
-            "content": item.content,  # 订单内容（只取前100个字作为简略）
+            "content": item.content[0:100],  # 订单描述（只取前100个字作为简略）
             "tag": item.tag,  # 订单标签，多个标签以逗号分隔
-            "price": item.price,  # 订单价格
+            "price": item.price,  # 价格
             "candidate_order_taker": item.candidate_order_taker,  # 候选接单人
             "candidate_order_taker_username": get_order_list_all_item(item, 'candidate_order_taker_username'),  # 候选接单人
             "order_status_cn": item.get_order_status_cn(),  # 订单状态的文字内容
@@ -107,3 +107,43 @@ def get_order_list_all(request):
         "total": total,  # 一共有多少条数据（190条）
         "list": list
     })
+
+
+# 返回订单详情（公共）
+@my_csrf_decorator()
+@post_limit
+def get_order_detail_public(request):
+    # 加载数据
+    post_data = json.loads(request.body)
+    # 表单校验
+    uf = GetOrderDetailPublicForm(post_data)
+    # 数据是否合法
+    if uf.is_valid() is False:
+        # 返回错误信息
+        return get_res_json(code=0, msg=uf.get_form_error_msg())
+
+    order_id = uf.data['id']
+    # 条件筛选，id符合，状态也得符合（禁止查询到隐私数据——即那些未公开状态不是01或10的订单）
+    data = Order.objects.filter(id=order_id).filter(Q(order_status='01') | Q(order_status='10'))
+    if len(data) == 0:
+        return get_res_json(code=0, msg='id错误，无法查询到对应的数据')
+
+    # 拿到该条数据
+    item = data[0]
+    # 拼装
+    result = {
+        "id": item.id,  # 订单id
+        "create_date": item.create_date.strftime('%Y-%m-%d %H:%M:%S'),  # 订单创建时间
+        "pub_user_id": item.pub_user_id,  # 订单发布人的id
+        "pub_username": get_order_list_all_item(item, 'pub_username'),  # 订单发布人的username
+        "title": item.title,
+        "content": item.content,  # 订单描述（只取前100个字作为简略）
+        "tag": item.tag,  # 订单标签，多个标签以逗号分隔
+        "price": item.price,  # 订单价格
+        "candidate_order_taker": item.candidate_order_taker,  # 候选接单人
+        "candidate_order_taker_username": get_order_list_all_item(item, 'candidate_order_taker_username'),  # 候选接单人
+        "order_status_cn": item.get_order_status_cn(),  # 订单状态的文字内容
+        "order_status": item.order_status,  # 订单状态的状态码
+    }
+
+    return get_res_json(code=200, data=result)

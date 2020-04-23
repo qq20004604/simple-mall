@@ -79,25 +79,12 @@ class Root extends React.Component {
                     </React.Fragment>
                 </Menu>
             </Header>
-            <Content className="site-layout" style={{padding: '0 50px', marginTop: 64}}>
-                <Breadcrumb style={{margin: '16px 0'}}>
-                    <Breadcrumb.Item>首页</Breadcrumb.Item>
-                    {
-                        this.state.tab === TAB_ORDER_LIST ? <Breadcrumb.Item>订单列表</Breadcrumb.Item> : null
-                    }
-                    {
-                        this.state.tab === TAB_CREATE_ORDER ? <Breadcrumb.Item>创建订单</Breadcrumb.Item> : null
-                    }
-                </Breadcrumb>
-                <div className="site-layout-background" style={{padding: 24, minHeight: 380}}>
-                    {
-                        this.state.tab === TAB_ORDER_LIST ? <OrderList usertype={this.state.usertype}/> : null
-                    }
-                    {
-                        this.state.tab === TAB_CREATE_ORDER ? <CreateOrder usertype={this.state.usertype}/> : null
-                    }
-                </div>
-            </Content>
+            {
+                this.state.tab === TAB_ORDER_LIST ? <OrderList usertype={this.state.usertype}/> : null
+            }
+            {
+                this.state.tab === TAB_CREATE_ORDER ? <CreateOrder usertype={this.state.usertype}/> : null
+            }
             <Footer style={{textAlign: 'center'}}>开发人：零零水（QQ：20004604，微信：qq20004604）</Footer>
 
             <Login loginDialogShow={this.state.loginDialogShow}

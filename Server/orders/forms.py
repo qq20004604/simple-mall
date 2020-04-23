@@ -54,3 +54,15 @@ class GetOrderListByAllForm(Form):
                                       'max_value': '【页码】数值错误',
                                   }
                                   )
+
+
+# 获取订单列表（默认订单列表，分页查询）
+class GetOrderDetailPublicForm(Form):
+    # 查询第几页，第1页的则传1
+    id = forms.IntegerField(min_value=1,
+                            required=True,
+                            error_messages={
+                                'required': '你没有填写【订单id】',
+                                'min_value': '【订单id】错误'
+                            }
+                            )

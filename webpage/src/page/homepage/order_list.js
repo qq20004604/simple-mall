@@ -20,13 +20,19 @@ import {
     Col,
     Row,
     Pagination,
-    Tag
+    Tag, Breadcrumb, Layout
 } from 'antd';
+import OrderDetail from './order_detail';
+import {HomeOutlined, UserOutlined} from '@ant-design/icons';
 import $ajax from 'api/ajax.js';
+
+const {Content} = Layout;
 
 function OrderList (props) {
     const [list, setList] = useState([]);
     const [total, setTotal] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0)
+    const [detailId, setDetailId] = useState(null);
 
     useEffect(() => loadList(), []);
 
@@ -58,19 +64,24 @@ function OrderList (props) {
     }
     const onChange = (page, pageSize) => {
         console.log(page, pageSize)
+        if (page === currentPage) {
+            return;
+        }
+        setCurrentPage(page)
         loadList(page)
     }
 
-    return <div id='order-list'>
+    // 订单列表
+    const ListDOM = <div id='order-list'>
         <PageHeader
             className="site-page-header"
-            title="查看订单列表"/>
+            title="订单列表"/>
         <div className='list'>
             <Row gutter={[32, 24]}>
                 {
-                    list.map(item => {
+                    list.length > 0 ? list.map(item => {
                         return <Col key={item.id} span={8}>
-                            <Card title={item.title} extra={<a href="#">查看详情</a>}>
+                            <Card title={item.title} extra={<a onClick={() => setDetailId(item.id)}>查看详情</a>}>
                                 <p>
                                     <span className='create-date'>{item.create_date}</span>
                                     <span className='price'>价格：{item.price}</span>
@@ -86,14 +97,18 @@ function OrderList (props) {
                                 </p>
                             </Card>
                         </Col>
-                    })
+                    }) : (<Col span={8}>
+                        <Card title="这里是信息的荒漠">
+                            <p>这里什么都没有</p>
+                        </Card>
+                    </Col>)
                 }
             </Row>
         </div>
         <Row>
             <Col span={16} offset={0}>
                 <Pagination pageSize={20}
-                            defaultCurrent={1}
+                            defaultCurrent={currentPage}
                             pageSizeOptions={['20']}
                             total={total}
                             showQuickJumper
@@ -103,6 +118,27 @@ function OrderList (props) {
             </Col>
         </Row>
     </div>
+
+    return <Content className="site-layout" style={{padding: '0 50px', marginTop: 64}}>
+        <Breadcrumb style={{margin: '16px 0'}}>
+            <Breadcrumb.Item>
+                <HomeOutlined/>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>
+                <a onClick={() => setDetailId(null)}>订单列表</a>
+            </Breadcrumb.Item>
+            {
+                detailId !== null ? <Breadcrumb.Item>订单详情</Breadcrumb.Item> : null
+            }
+
+        </Breadcrumb>
+        <div className="site-layout-background" style={{padding: 24, minHeight: 380}}>
+            {
+                detailId === null ? ListDOM : <OrderDetail id={detailId}
+                                                           setDetailId={setDetailId}/>
+            }
+        </div>
+    </Content>
 }
 
 export default OrderList

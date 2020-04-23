@@ -28,6 +28,9 @@ const $ajax = {
     },
     orderList (payload) {
         return post('/orders/list/all/', payload);
+    },
+    orderDetailPublic (payload) {
+        return post('/orders/detail/public/', payload);
     }
 };
 
