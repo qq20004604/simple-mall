@@ -14,7 +14,23 @@ let imgURL = ''
 if (process.env.NODE_ENV === 'development') { // 开发环境
     baseURL = '/api'
 } else { // 生产环境
-    baseURL = ''
+    baseURL = 'http://www.lovelovewall.com:8000'
+}
+
+function getCookie (name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        let cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
 axios.defaults.baseURL = baseURL
@@ -40,12 +56,13 @@ axios.interceptors.response.use(
 )
 
 let post = (url, data) => {
+    let csrftoken = getCookie('csrftoken');
     return axios({
         method: 'post',
         url,
         data: data,
         headers: {
-            'X-CSRFToken': window.csrftoken
+            'X-CSRFToken': csrftoken
         }
     })
 }

@@ -25,7 +25,7 @@ const children = [
 ];
 const {Content} = Layout;
 
-function CreateOrder (props) {
+function CreateOrder () {
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
 

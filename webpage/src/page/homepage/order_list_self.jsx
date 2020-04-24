@@ -26,7 +26,7 @@ function OrderListSelf (props) {
     const [list, setList] = useState([]);
     const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState(0)
-    const [detailId, setDetailId] = useState(null);
+    const [detailId, setDetailId] = useState(7);
 
     useEffect(() => loadList(), []);
 

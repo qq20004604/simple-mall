@@ -6,7 +6,7 @@
  *
  */
 import React, {useEffect, useState} from 'react';
-import {PageHeader, notification, Descriptions, Badge, Tag, Select, Button} from 'antd';
+import {PageHeader, notification, Descriptions, Timeline, Tag, Select, Button} from 'antd';
 import $ajax from 'api/ajax.js';
 import OrderDetail from './order_detail';
 
@@ -158,7 +158,6 @@ function OrderDetailSelf (props) {
     }
     // 开始订单
     const BeginOrderDOM = () => {
-
         // 需要自己是接单人，且订单状态为11
         if (orderDetail.order_taker === userid && orderDetail.order_status === '11') {
             return <Button type="primary"
@@ -176,12 +175,11 @@ function OrderDetailSelf (props) {
             title="查看订单详情"/>
         <Descriptions bordered>
             <Descriptions.Item label="订单名称" span={3}>{orderDetail.title}</Descriptions.Item>
-            <Descriptions.Item label="创建时间">{orderDetail.create_date}</Descriptions.Item>
             <Descriptions.Item label="创建人">{orderDetail.pub_username}</Descriptions.Item>
             <Descriptions.Item label="价格">{orderDetail.price}</Descriptions.Item>
             <Descriptions.Item label="订单状态"><span
                 style={{color: 'red'}}>{orderDetail.order_status_cn}</span></Descriptions.Item>
-            <Descriptions.Item label="订单标签" span={2}>
+            <Descriptions.Item label="订单标签" span={3}>
                 {
                     orderDetail.tag.length > 0
                         ? orderDetail.tag.split(',').map(tag => <Tag key={tag} color={'processing'}>{tag}</Tag>)
@@ -202,13 +200,24 @@ function OrderDetailSelf (props) {
             <Descriptions.Item label="订单描述" span={3}>
                 {orderDetail.content}
             </Descriptions.Item>
+            <Descriptions.Item label="订单进程" span={3}>
+                <Timeline>
+                    <Timeline.Item>创建时间：{orderDetail.create_date}</Timeline.Item>
+                    <Timeline.Item>选定接单人时间：{orderDetail.order_set_taker_date}</Timeline.Item>
+                    <Timeline.Item>接单方确认开始时间：{orderDetail.order_begin_doing_date}</Timeline.Item>
+                    <Timeline.Item color='green'>
+                        接单方确认完成时间：{orderDetail.order_done_by_taker_date}
+                        <br/>
+                        发单方确认完成时间：{orderDetail.order_scored_by_taker_date}
+                    </Timeline.Item>
+                    <Timeline.Item>
+                        接单方评价时间：{orderDetail.order_scored_by_taker_date}
+                        <br/>
+                        发单方评价时间：{orderDetail.order_scored_by_pub_date}
+                    </Timeline.Item>
+                </Timeline>,
+            </Descriptions.Item>
             <Descriptions.Item label="接单人">{orderDetail.order_taker_username}</Descriptions.Item>
-            <Descriptions.Item label="选定接单人时间">{orderDetail.order_set_taker_date}</Descriptions.Item>
-            <Descriptions.Item label="接单方确认开始时间">{orderDetail.order_begin_doing_date}</Descriptions.Item>
-            <Descriptions.Item label="接单方确认完成时间">{orderDetail.order_done_by_taker_date}</Descriptions.Item>
-            <Descriptions.Item label="发单方确认完成时间" span={2}>{orderDetail.order_done_by_pub_date}</Descriptions.Item>
-            <Descriptions.Item label="接单方评价时间">{orderDetail.order_scored_by_taker_date}</Descriptions.Item>
-            <Descriptions.Item label="发单方评价时间" span={2}>{orderDetail.order_scored_by_pub_date}</Descriptions.Item>
             <Descriptions.Item label="接单方取消订单时间">{orderDetail.order_canceled_by_taker_date}</Descriptions.Item>
             <Descriptions.Item label="发单方取消订单时间" span={2}>{orderDetail.order_canceled_by_pub_date}</Descriptions.Item>
             <Descriptions.Item label="接单方打分">{orderDetail.taker_score_pub}</Descriptions.Item>

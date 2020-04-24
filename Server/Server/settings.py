@@ -22,10 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '+z-c)r%62_h%a%pwbs5$c*=z1ie&$lzt0d2wsppgrbodfu#5dn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    '127.0.0.1'
+    '127.0.0.1',
+    'localhost',
+    'www.lovelovewall.com'
 ]
 
 # Application definition
