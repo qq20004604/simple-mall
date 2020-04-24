@@ -1,8 +1,8 @@
 import json
 from package.decorator_csrf_setting import my_csrf_decorator
-from package.request_method_limit import post_limit, pub_limit, login_limit
+from package.request_method_limit import post_limit, pub_limit, login_limit, order_taker_limit
 from package.response_data import get_res_json
-from .forms import CreateOrderForm, GetOrderListForm, GetOrderDetailForm
+from .forms import CreateOrderForm, GetOrderListForm, GetOrderDetailForm, TakerOrderForm, SetTakerOrderForm
 from .models import Order
 from register.models import User
 from django.db.models import Q
@@ -310,3 +310,98 @@ def get_order_detail_private(request):
     }
 
     return get_res_json(code=200, data=result)
+
+
+# 接单
+@my_csrf_decorator()
+@post_limit
+@order_taker_limit
+def take_order(request):
+    # 加载数据
+    post_data = json.loads(request.body)
+    # 表单校验
+    uf = TakerOrderForm(post_data)
+    # 数据是否合法
+    if uf.is_valid() is False:
+        # 返回错误信息
+        return get_res_json(code=0, msg=uf.get_form_error_msg())
+
+    order_id = uf.data['id']
+    # 拿取用户 id
+    user_id = request.session.get('id')
+    # 先拿取数据
+    order_data = Order.objects.filter(id=order_id)
+    if len(order_data) == 0:
+        return get_res_json(code=0, msg='订单错误，无法找到对应的订单')
+    result = order_data[0].set_candidate_order_taker(user_id)
+    # 如果正常，则返回True
+    if result is True:
+        order_data[0].save()
+        return get_res_json(code=200, data={
+            'id': order_data[0].id
+        })
+    else:
+        return get_res_json(code=0, msg=result)
+
+
+# 选择接单人
+@my_csrf_decorator()
+@post_limit
+@pub_limit
+def set_take_order(request):
+    # 加载数据
+    post_data = json.loads(request.body)
+    # 表单校验
+    uf = SetTakerOrderForm(post_data)
+    # 数据是否合法
+    if uf.is_valid() is False:
+        # 返回错误信息
+        return get_res_json(code=0, msg=uf.get_form_error_msg())
+
+    order_id = uf.data['order_id']
+    user_id = uf.data['user_id']
+    # 拿取用户 id
+    pub_id = request.session.get('id')
+    # 先拿取数据
+    order_data = Order.objects.filter(id=order_id, pub_user_id=pub_id)
+    if len(order_data) == 0:
+        return get_res_json(code=0, msg='订单错误，无法找到对应的订单')
+    # 设置订单候选人
+    result = order_data[0].set_order_taker(user_id)
+    # 如果正常，则返回True
+    if result is True:
+        order_data[0].save()
+        return get_res_json(code=200)
+    else:
+        return get_res_json(code=0, msg=result)
+
+
+# 开始订单
+@my_csrf_decorator()
+@post_limit
+@order_taker_limit
+def order_begin(request):
+    # 加载数据
+    post_data = json.loads(request.body)
+    # 表单校验
+    uf = TakerOrderForm(post_data)
+    # 数据是否合法
+    if uf.is_valid() is False:
+        # 返回错误信息
+        return get_res_json(code=0, msg=uf.get_form_error_msg())
+
+    order_id = uf.data['id']
+    # 拿取用户 id
+    taker_id = request.session.get('id')
+    # 先拿取数据
+    order_data = Order.objects.filter(id=order_id)
+    if len(order_data) == 0:
+        return get_res_json(code=0, msg='订单错误，无法找到对应的订单')
+    # 设置订单候选人
+    result = order_data[0].set_order_doing(taker_id)
+    # 如果正常，则返回True
+    if result is True:
+        order_data[0].save()
+        return get_res_json(code=200)
+    else:
+        return get_res_json(code=0, msg=result)

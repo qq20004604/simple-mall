@@ -6,11 +6,14 @@
  *
  */
 import React, {useEffect, useState} from 'react';
-import {PageHeader, notification, Descriptions, Badge, Tag} from 'antd';
+import {PageHeader, notification, Descriptions, Button, Select, Tag} from 'antd';
+
 import $ajax from 'api/ajax.js';
+import GLOBAL_VAR from 'common/config/variable'
 
 function OrderDetail (props) {
-    const {id, setDetailId} = props;
+    const {id, setDetailId, user} = props;
+    const {usertype, userid} = user;
     useEffect(() => loadDetail(), []);
     const [orderDetail, setOrderDetail] = useState({
         'id': '',      // 订单id
@@ -36,6 +39,7 @@ function OrderDetail (props) {
             // }
             console.log(result)
             if (result.code === 200) {
+                console.log(result)
                 setOrderDetail(result.data)
             } else {
                 notification.error({
@@ -49,7 +53,63 @@ function OrderDetail (props) {
         }).finally(() => {
         })
     }
-    console.log(orderDetail)
+
+    const [takeBtnLoading, setTakeBtnLoading] = useState(false)
+
+    const orderTake = () => {
+        setTakeBtnLoading(true)
+        $ajax.takeOrder({id}).then(result => {
+            // result = {
+            //     code: 200,
+            //     msg: '',
+            //     data: null
+            // }
+            console.log(result)
+            if (result.code === 200) {
+                notification.success({
+                    message: '提交成功'
+                })
+                loadDetail()
+            } else {
+                notification.error({
+                    message: result.msg
+                })
+            }
+        }).catch(() => {
+            notification.error({
+                message: '服务器错误'
+            })
+        }).finally(() => {
+            setTakeBtnLoading(false)
+        })
+    }
+
+    // 接单按钮（注意，订单状态只有【未接单】和【已有接单候选人】两个状态）
+    const GetTakeOrderDOM = function () {
+        // 用户类型是接单人（包含未登录）
+        if (usertype !== GLOBAL_VAR.USER_TYPE_TAKER) {
+            return null
+        }
+        // 并且该用户不是该订单的创建者
+        if (orderDetail.pub_user_id === userid) {
+            return null
+        }
+        // 也不是这个订单的接单人（已接单当然不能再接了）
+        if (orderDetail.order_taker === userid) {
+            return null
+        }
+        // 并且不是这个订单的候选接单人
+        if (orderDetail.candidate_order_taker.split(',').indexOf(userid) > -1) {
+            return <Descriptions.Item label="操作">
+                <Button type="info" disabled={true}>已参与接单</Button>
+            </Descriptions.Item>
+        }
+        return <Descriptions.Item label="操作">
+            <Button type="primary"
+                    onClick={orderTake}
+                    loading={takeBtnLoading}>接单</Button>
+        </Descriptions.Item>
+    }
 
     return <div id='order-list'>
         <PageHeader
@@ -61,8 +121,12 @@ function OrderDetail (props) {
             <Descriptions.Item label="创建时间">{orderDetail.create_date}</Descriptions.Item>
             <Descriptions.Item label="创建人">{orderDetail.pub_username}</Descriptions.Item>
             <Descriptions.Item label="价格">{orderDetail.price}</Descriptions.Item>
-            <Descriptions.Item label="订单状态"><span
-                style={{color: 'red'}}>{orderDetail.order_status_cn}</span></Descriptions.Item>
+            <Descriptions.Item label="订单状态">
+                <span style={{color: 'red'}}>
+                {orderDetail.order_status_cn}
+                    {orderDetail.order_status === '10' ? `（${orderDetail.candidate_order_taker_username.split(',').length}人）` : ''}
+            </span>
+            </Descriptions.Item>
             <Descriptions.Item label="订单标签" span={2}>
                 {
                     orderDetail.tag.length > 0
@@ -78,9 +142,12 @@ function OrderDetail (props) {
                         : '尚无人接单'
                 }
             </Descriptions.Item>
-            <Descriptions.Item label="订单描述">
+            <Descriptions.Item label="订单描述" span={3}>
                 {orderDetail.content}
             </Descriptions.Item>
+            {
+                GetTakeOrderDOM()
+            }
         </Descriptions>
     </div>
 }

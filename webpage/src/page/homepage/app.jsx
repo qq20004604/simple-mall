@@ -4,6 +4,7 @@ import 'common/css/reset.css';
 import './style.scss';
 import 'antd/dist/antd.css';
 import $ajax from 'api/ajax.js';
+import GLOBAL_VAR from 'common/config/variable'
 import {Layout, Menu, Breadcrumb, notification} from 'antd';
 import Login from './login';
 import Register from './register';
@@ -13,7 +14,6 @@ import OrderListSelf from './order_list_self';
 
 const {Header, Footer} = Layout;
 
-const USER_TYPE_PUB = '01'
 // 标签：
 const TAB_ORDER_LIST = '00' // 订单列表
 const TAB_CREATE_ORDER = '01'   // 创建订单
@@ -29,6 +29,7 @@ class Root extends React.Component {
     state = {
         username: null,
         usertype: null,
+        userid: null,
 
         tab: window.localStorage.currentTab,
 
@@ -43,7 +44,8 @@ class Root extends React.Component {
             if (result.code === 200) {
                 this.setState({
                     username: result.data.username,
-                    usertype: result.data.usertype
+                    usertype: result.data.usertype,
+                    userid: result.data.userid
                 })
             }
         })
@@ -67,6 +69,11 @@ class Root extends React.Component {
             </span>
         }
 
+        const user = {
+            usertype: this.state.usertype,
+            userid: String(this.state.userid)
+        }
+
         return <Layout>
             <Header style={{position: 'fixed', zIndex: 1, width: '100%'}}
                     id='header'>
@@ -76,7 +83,7 @@ class Root extends React.Component {
                       onSelect={this.onTabChange}>
                     <Menu.Item key={TAB_ORDER_LIST}>订单列表</Menu.Item>
                     {
-                        this.state.usertype === USER_TYPE_PUB
+                        this.state.usertype === GLOBAL_VAR.USER_TYPE_PUB
                             ? <Menu.Item key={TAB_CREATE_ORDER}>发布订单</Menu.Item>
                             : null
                     }
@@ -94,13 +101,13 @@ class Root extends React.Component {
                 </Menu>
             </Header>
             {
-                this.state.tab === TAB_ORDER_LIST ? <OrderList usertype={this.state.usertype}/> : null
+                this.state.tab === TAB_ORDER_LIST ? <OrderList user={user}/> : null
             }
             {
-                this.state.tab === TAB_CREATE_ORDER ? <CreateOrder usertype={this.state.usertype}/> : null
+                this.state.tab === TAB_CREATE_ORDER ? <CreateOrder/> : null
             }
             {
-                this.state.tab === TAB_MY_ORDER_LIST ? <OrderListSelf/> : null
+                this.state.tab === TAB_MY_ORDER_LIST ? <OrderListSelf user={user}/> : null
             }
             <Footer style={{textAlign: 'center'}}>开发人：零零水（QQ：20004604，微信：qq20004604）</Footer>
 
@@ -129,7 +136,11 @@ class Root extends React.Component {
 
     // 设置用户当前状态
     setLoginStatus = (data) => {
-        this.setState({username: data.username, usertype: data.usertype})
+        this.setState({
+            username: data.username,
+            usertype: data.usertype,
+            userid: data.userid
+        })
     }
 
     // 登出
@@ -149,7 +160,7 @@ class Root extends React.Component {
                 message: '服务器错误'
             })
         }).finally(() => {
-            this.setState({username: null, usertype: null})
+            this.setState({username: null, usertype: null, userid: null})
         })
     }
 

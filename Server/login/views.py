@@ -45,7 +45,8 @@ def login(request):
     set_user_session(request, search_result[0])
     return get_res_json(code=200, msg='登录成功', data={
         'username': search_result[0].username,
-        'usertype': search_result[0].usertype
+        'usertype': search_result[0].usertype,
+        'userid': search_result[0].id
     })
 
 
@@ -56,6 +57,7 @@ def had_logined(request):
         return get_res_json(code=200, data={
             'username': request.session.get('username'),
             'usertype': request.session.get('usertype'),
+            'userid': request.session.get('id'),
         })
     else:
         return get_res_json(code=0, msg='')

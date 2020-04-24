@@ -66,3 +66,35 @@ class GetOrderDetailForm(Form):
                                 'min_value': '【订单id】错误'
                             }
                             )
+
+
+# 接单
+class TakerOrderForm(Form):
+    # 订单id
+    id = forms.IntegerField(min_value=1,
+                            required=True,
+                            error_messages={
+                                'required': '你没有填写【订单id】',
+                                'min_value': '【订单id】错误'
+                            }
+                            )
+
+
+# 接单
+class SetTakerOrderForm(Form):
+    # 订单id
+    order_id = forms.IntegerField(min_value=1,
+                                  required=True,
+                                  error_messages={
+                                      'required': '你没有填写【订单id】',
+                                      'min_value': '【订单id】错误'
+                                  }
+                                  )
+    # 接单人的id
+    user_id = forms.IntegerField(min_value=1,
+                                 required=True,
+                                 error_messages={
+                                     'required': '你没有填写【接单人id】',
+                                     'min_value': '【接单人id】错误'
+                                 }
+                                 )

@@ -21,7 +21,8 @@ import $ajax from 'api/ajax.js';
 
 const {Content} = Layout;
 
-function OrderListSelf () {
+function OrderListSelf (props) {
+    const {user} = props;
     const [list, setList] = useState([]);
     const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState(0)
@@ -128,7 +129,8 @@ function OrderListSelf () {
         <div className="site-layout-background" style={{padding: 24, minHeight: 380}}>
             {
                 detailId === null ? ListDOM : <OrderDetailSelf id={detailId}
-                                                               setDetailId={setDetailId}/>
+                                                               setDetailId={setDetailId}
+                                                               user={user}/>
             }
         </div>
     </Content>

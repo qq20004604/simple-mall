@@ -37,6 +37,15 @@ const $ajax = {
     },
     orderDetailPrivate (payload) {
         return post('/orders/detail/private/', payload);
+    },
+    takeOrder (payload) {
+        return post('/orders/order/take/', payload);
+    },
+    setOrderTaker (payload) {
+        return post('/orders/order/set_taker_order/', payload);
+    },
+    beginOrder (payload) {
+        return post('/orders/order/begin/', payload);
     }
 };
 

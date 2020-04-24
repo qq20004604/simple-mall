@@ -106,5 +106,6 @@ def reg(request):
     set_user_session(request, new_user)
     return get_res_json(code=200, msg='注册成功', data={
         'username': username,
-        'usertype': usertype
+        'usertype': usertype,
+        'userid': new_user.id
     })

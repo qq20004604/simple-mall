@@ -140,6 +140,7 @@ class Order(models.Model):
             self.order_status = '10'
             if len(self.candidate_order_taker) == 0:
                 self.candidate_order_taker = user_id
+                return True
             else:
                 # 获取 list 形式，当前所有接单人
                 cot = str.split(self.candidate_order_taker, ',')
@@ -175,14 +176,20 @@ class Order(models.Model):
 
     # 设置订单状态（选定接单人11）
     def set_order_taker(self, user_id):
-        cot = str.split(self.candidate_order_taker, ',')[:-1]
+        if self.order_status != '10':
+            return '订单状态错误'
+
+        cot = [x for x in self.candidate_order_taker.split(',') if x]
         # 只有在候选人列表里的，才能选定他接单
         if user_id in cot:
             # 清空候选人
             self.candidate_order_taker = ''
             # 选定接单人
             self.order_taker = user_id
+            # 设置时间
             self.order_set_taker_date = timezone.now()
+            # 修改订单状态
+            self.order_status = '11'
             return True
         else:
             return '该用户不在接单人候选列表'
@@ -191,7 +198,7 @@ class Order(models.Model):
     def set_order_doing(self, change_user_id):
         if self.order_status != '11':
             return '当前无法设置订单状态为进行中'
-        if self.order_taker != change_user_id:
+        if self.order_taker != str(change_user_id):
             return '只有接单人才能将订单状态改为进行中'
         self.order_status = '20'
         self.order_begin_doing_date = timezone.now()
