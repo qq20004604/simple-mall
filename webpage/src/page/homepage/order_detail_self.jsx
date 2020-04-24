@@ -202,15 +202,20 @@ function OrderDetailSelf (props) {
             </Descriptions.Item>
             <Descriptions.Item label="订单进程" span={3}>
                 <Timeline>
-                    <Timeline.Item>创建时间：{orderDetail.create_date}</Timeline.Item>
-                    <Timeline.Item>选定接单人时间：{orderDetail.order_set_taker_date}</Timeline.Item>
-                    <Timeline.Item>接单方确认开始时间：{orderDetail.order_begin_doing_date}</Timeline.Item>
-                    <Timeline.Item color='green'>
+                    <Timeline.Item
+                        color={orderDetail.order_status <= 1 ? 'red' : 'blue'}>创建时间：{orderDetail.create_date}</Timeline.Item>
+                    <Timeline.Item
+                        color={orderDetail.order_status >= 10 && orderDetail.order_status < 20 ? 'red' : 'blue'}>选定接单人时间：{orderDetail.order_set_taker_date}</Timeline.Item>
+                    <Timeline.Item
+                        color={orderDetail.order_status == 20 ? 'red' : 'blue'}>接单方确认开始时间：{orderDetail.order_begin_doing_date}</Timeline.Item>
+                    <Timeline.Item
+                        color={orderDetail.order_status > 20 && orderDetail.order_status < 30 ? 'red' : 'blue'}>
                         接单方确认完成时间：{orderDetail.order_done_by_taker_date}
                         <br/>
                         发单方确认完成时间：{orderDetail.order_scored_by_taker_date}
                     </Timeline.Item>
-                    <Timeline.Item>
+                    <Timeline.Item
+                        color={orderDetail.order_status >= 30 && orderDetail.order_status <= 40 ? 'red' : 'blue'}>
                         接单方评价时间：{orderDetail.order_scored_by_taker_date}
                         <br/>
                         发单方评价时间：{orderDetail.order_scored_by_pub_date}
