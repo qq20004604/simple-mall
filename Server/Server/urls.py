@@ -21,6 +21,7 @@ urlpatterns = [
     path('register/', include('register.urls')),
     path('login/', include('login.urls')),
     path('orders/', include('orders.urls')),
+    path('', include('page.urls')),
 ]
 
 # 如果是调试模式

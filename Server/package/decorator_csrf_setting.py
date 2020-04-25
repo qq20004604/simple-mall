@@ -11,7 +11,7 @@ def my_csrf_decorator():
     def fordebug_csrf_decorator(func):
         # 一个空的csrf，调试时使用
         def wrapper(*args, **kwargs):
-            print('csrf close')
+            print('csrf open')
             return func(*args, **kwargs)
 
         return wrapper
