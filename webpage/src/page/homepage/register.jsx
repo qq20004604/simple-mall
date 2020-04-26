@@ -23,6 +23,7 @@ function Register (props) {
     const [password, setPassword] = useState('');
     const [rpPassword, setRpPassword] = useState('');
     const [usertype, setUsertype] = useState('');
+    const [isSendBtnDisabled, setSendBtnDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
 
     // 提交注册
@@ -98,6 +99,7 @@ function Register (props) {
                 notification.success({
                     message: result.msg
                 })
+                setSendBtnDisabled(true)
             } else {
                 notification.error({
                     message: result.msg
@@ -153,7 +155,7 @@ function Register (props) {
                        width: 250
                    }} value={vcode} onChange={e => setVcode(e.target.value)}/>
             <Button type='primary'
-                    disabled={false}
+                    disabled={isSendBtnDisabled}
                     style={{
                         float: 'right'
                     }}

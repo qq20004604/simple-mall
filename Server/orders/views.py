@@ -60,6 +60,16 @@ def get_order_list_all_item(item, key):
         taker_id_list = candidate_order_taker.split(',')
         cnname_list = [User.objects.filter(id=user_id)[0].username for user_id in taker_id_list]
         return ','.join(cnname_list)
+    # 候选人的电话
+    if key == 'candidate_order_taker_tel':
+        candidate_order_taker = item.candidate_order_taker
+        # 长度为0，说明没有候选人
+        if len(candidate_order_taker) == 0:
+            return ''
+        taker_id_list = candidate_order_taker.split(',')
+        tel_list = [User.objects.filter(id=user_id)[0].tel for user_id in taker_id_list]
+        return ','.join(tel_list)
+
     # 接单人姓名
     if key == 'order_taker_username':
         order_taker = item.order_taker
@@ -68,6 +78,14 @@ def get_order_list_all_item(item, key):
             return ''
         # 否则返回该接单人的姓名
         return User.objects.filter(id=item.order_taker)[0].username
+    # 接单人电话
+    if key == 'order_taker_tel':
+        order_taker = item.order_taker
+        # 长度为0，说明没有接单人
+        if len(order_taker) == 0:
+            return ''
+        # 否则返回该接单人的姓名
+        return User.objects.filter(id=item.order_taker)[0].tel
 
 
 # 返回订单列表（全部）
@@ -283,10 +301,12 @@ def get_order_detail_private(request):
         "price": item.price,  # 价格
         "candidate_order_taker": item.candidate_order_taker,  # 候选接单人
         "candidate_order_taker_username": get_order_list_all_item(item, 'candidate_order_taker_username'),  # 候选接单人
+        "candidate_order_taker_tel": get_order_list_all_item(item, 'candidate_order_taker_tel'),  # 候选接单人
         "order_status_cn": item.get_order_status_cn(),  # 订单状态的文字内容
         "order_status": item.order_status,  # 订单状态的状态码
         "order_taker": item.order_taker,  # 订单接单人id
         "order_taker_username": get_order_list_all_item(item, 'order_taker_username'),  # 订单接单人 username
+        "order_taker_tel": get_order_list_all_item(item, 'order_taker_tel'),  # 订单接单人 username
         "order_set_taker_date": item.order_set_taker_date.strftime(
             '%Y-%m-%d %H:%M:%S') if item.order_set_taker_date else '',  # 选定接单人时间
         "order_begin_doing_date": item.order_begin_doing_date.strftime(

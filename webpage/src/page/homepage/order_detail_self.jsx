@@ -297,8 +297,10 @@ function OrderDetailSelf (props) {
                 orderDetail.order_status < 11 ? (<Descriptions.Item label="参与接单人" span={3}>
                     {
                         orderDetail.candidate_order_taker_username.length > 0
-                            ? orderDetail.candidate_order_taker_username.split(',').map(tag => <Tag key={tag}
-                                                                                                    color={'warning'}>{tag}</Tag>)
+                            ? orderDetail.candidate_order_taker_username
+                                .split(',')
+                                .map((name, index) => <Tag key={name}
+                                                           color={'warning'}>{name}（电话：{orderDetail.candidate_order_taker_tel.split(',')[index]}）</Tag>)
                             : '尚无人接单'
                     }
                 </Descriptions.Item>) : null
@@ -329,7 +331,9 @@ function OrderDetailSelf (props) {
                     </Timeline.Item>
                 </Timeline>
             </Descriptions.Item>
-            <Descriptions.Item label="接单人">{orderDetail.order_taker_username}</Descriptions.Item>
+            <Descriptions.Item label="接单人">
+                {orderDetail.order_taker_username}（电话：{orderDetail.order_taker_tel}）
+            </Descriptions.Item>
             <Descriptions.Item label="接单方取消订单时间">{orderDetail.order_canceled_by_taker_date}</Descriptions.Item>
             <Descriptions.Item label="发单方取消订单时间">{orderDetail.order_canceled_by_pub_date}</Descriptions.Item>
             <Descriptions.Item label="接单方打分">
