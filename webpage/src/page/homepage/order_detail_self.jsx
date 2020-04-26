@@ -319,7 +319,7 @@ function OrderDetailSelf (props) {
                                    color={orderDetail.order_status > 20 && orderDetail.order_status < 30 ? 'red' : 'blue'}>
                         接单方：{orderDetail.order_done_by_taker_date}
                         <br/>
-                        发单方：{orderDetail.order_scored_by_taker_date}
+                        发单方：{orderDetail.order_done_by_pub_date}
                     </Timeline.Item>
                     <Timeline.Item label={'评价时间'}
                                    color={orderDetail.order_status >= 30 && orderDetail.order_status <= 40 ? 'red' : 'blue'}>

@@ -71,8 +71,9 @@ class Root extends React.Component {
         } else {
             RegisterDom = <span className={'reg-status'}
                                 key='logout'>
-                你好，{this.state.username}！{this.state.usertype ? this.state.usertype === '01' ? `用户类型：发单人` : `用户类型：接单人` : ''}<a
-                onClick={this.logout}>点击登出</a>
+                你好，{this.state.username}！{this.state.usertype ? this.state.usertype === '01'
+                ? `用户类型：发单人` : `用户类型：接单人` : ''}
+                <a onClick={this.logout} style={{marginLeft: '30px'}}>点击登出</a>
             </span>
         }
 

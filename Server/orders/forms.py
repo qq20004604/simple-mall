@@ -1,7 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from package.form import Form, forms
-from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+
+def validate_even(value):
+    split_list = [x for x in value.split(',') if x]
+    for item in split_list:
+        if len(item) > 8:
+            raise ValidationError(
+                _('单个标签最多只能有8个字'),
+                params={'value': value},
+            )
 
 
 # 创建订单
@@ -27,7 +38,7 @@ class CreateOrderForm(Form):
     tag = forms.CharField(max_length=50,
                           required=False,
                           validators=[
-                              RegexValidator(r'[^,]{8,}', '单个标签最多只能有8个字')
+                              validate_even
                           ],
                           error_messages={
                               'max_length': '【订单标签】长度应不超过40字',

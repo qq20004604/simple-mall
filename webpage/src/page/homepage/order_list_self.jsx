@@ -13,7 +13,8 @@ import {
     Col,
     Row,
     Pagination,
-    Tag, Breadcrumb, Layout
+    Tag, Breadcrumb, Layout,
+    Empty
 } from 'antd';
 import OrderDetailSelf from './order_detail_self';
 import {HomeOutlined, UserOutlined} from '@ant-design/icons';
@@ -65,53 +66,61 @@ function OrderListSelf (props) {
         loadList(page)
     }
 
-    // 订单列表
-    const ListDOM = <div id='order-list'>
-        <PageHeader
-            className="site-page-header"
-            title="我的订单"/>
-        <div className='list'>
-            <Row gutter={[32, 24]}>
-                {
-                    list.length > 0 ? list.map(item => {
-                        return <Col key={item.id} span={8}>
-                            <Card title={item.title} extra={<a onClick={() => setDetailId(item.id)}>查看详情</a>}>
-                                <p>
-                                    <span className='create-date'>{item.create_date}</span>
-                                    <span className='price'>价格：{item.price}</span>
-                                </p>
-                                <p className='content'>{item.content ? item.content : '这里缺少简介'}</p>
-                                <p>
-                                    <Tag color="blue">发单人：{item.pub_username}</Tag>
-                                    {
-                                        item.tag.length > 0
-                                            ? item.tag.split(',').map(tag => <Tag key={tag}>{tag}</Tag>)
-                                            : null
-                                    }
-                                </p>
-                            </Card>
-                        </Col>
-                    }) : (<Col span={8}>
-                        <Card title="这里是信息的荒漠">
-                            <p>这里什么都没有</p>
-                        </Card>
-                    </Col>)
-                }
+    let ListDOM = null;
+    if (list.length === 0) {
+        ListDOM = <div id='order-list'>
+            <PageHeader
+                className="site-page-header"
+                title="我的订单"/>
+            <div className="list">
+                <Empty description={'这里什么都木有'}/>
+            </div>
+        </div>
+    } else {
+        // 订单列表
+        ListDOM = <div id='order-list'>
+            <PageHeader
+                className="site-page-header"
+                title="我的订单"/>
+            <div className='list'>
+                <Row gutter={[32, 24]}>
+                    {
+                        list.map(item => {
+                            return <Col key={item.id} span={8}>
+                                <Card title={item.title} extra={<a onClick={() => setDetailId(item.id)}>查看详情</a>}>
+                                    <p>
+                                        <span className='create-date'>{item.create_date}</span>
+                                        <span className='price'>价格：{item.price}</span>
+                                    </p>
+                                    <p className='content'>{item.content ? item.content : '这里缺少简介'}</p>
+                                    <p>
+                                        <Tag color="blue">发单人：{item.pub_username}</Tag>
+                                        {
+                                            item.tag.length > 0
+                                                ? item.tag.split(',').map(tag => <Tag key={tag}>{tag}</Tag>)
+                                                : null
+                                        }
+                                    </p>
+                                </Card>
+                            </Col>
+                        })
+                    }
+                </Row>
+            </div>
+            <Row>
+                <Col span={16} offset={0}>
+                    <Pagination pageSize={20}
+                                defaultCurrent={currentPage}
+                                pageSizeOptions={['20']}
+                                total={total}
+                                showQuickJumper
+                                onChange={onChange}
+                                showTotal={total => `总共 ${total} 条`}
+                    />
+                </Col>
             </Row>
         </div>
-        <Row>
-            <Col span={16} offset={0}>
-                <Pagination pageSize={20}
-                            defaultCurrent={currentPage}
-                            pageSizeOptions={['20']}
-                            total={total}
-                            showQuickJumper
-                            onChange={onChange}
-                            showTotal={total => `总共 ${total} 条`}
-                />
-            </Col>
-        </Row>
-    </div>
+    }
 
     return <Content className="site-layout" style={{padding: '0 50px', marginTop: 64}}>
         <Breadcrumb style={{margin: '16px 0'}}>
