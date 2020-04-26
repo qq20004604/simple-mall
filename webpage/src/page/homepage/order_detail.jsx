@@ -142,7 +142,7 @@ function OrderDetail (props) {
                         : '尚无人接单'
                 }
             </Descriptions.Item>
-            <Descriptions.Item label="订单描述" span={3}>
+            <Descriptions.Item label="订单描述" span={3} className='wrap-text'>
                 {orderDetail.content}
             </Descriptions.Item>
             {

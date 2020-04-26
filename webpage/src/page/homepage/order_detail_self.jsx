@@ -306,7 +306,7 @@ function OrderDetailSelf (props) {
                 </Descriptions.Item>) : null
             }
 
-            <Descriptions.Item label="订单描述" span={3}>
+            <Descriptions.Item label="订单描述" span={3} className='wrap-text'>
                 {orderDetail.content}
             </Descriptions.Item>
             <Descriptions.Item label="订单进程" span={3}>

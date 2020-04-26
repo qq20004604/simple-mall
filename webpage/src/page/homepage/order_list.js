@@ -98,7 +98,7 @@ function OrderList (props) {
                                         <span className='create-date'>{item.create_date}</span>
                                         <span className='price'>价格：{item.price}</span>
                                     </p>
-                                    <p className='content'>{item.content ? item.content : '这里缺少简介'}</p>
+                                    <p className='content wrap-text'>{item.content ? item.content : '这里缺少简介'}</p>
                                     <p>
                                         <Tag color="blue">发单人：{item.pub_username}</Tag>
                                         {
