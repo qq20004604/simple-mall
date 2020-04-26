@@ -18,8 +18,8 @@ function OrderDetail (props) {
     const [orderDetail, setOrderDetail] = useState({
         'id': '',      // 订单id
         'create_date': '',     // 订单创建时间
-        'pub_user_id': '',             // 订单发布人的id
-        'pub_username': '',   // 订单发布人的username
+        'pub_user_id': '',             // 订单发单人的id
+        'pub_username': '',   // 订单发单人的username
         'title': '',
         'content': '',      // 订单描述（只取前100个字作为简略）
         'tag': '',          // 订单标签，多个标签以逗号分隔

@@ -46,6 +46,9 @@ const $ajax = {
     },
     beginOrder (payload) {
         return post('/orders/order/begin/', payload);
+    },
+    endOrder (payload) {
+        return post('/orders/order/end/', payload);
     }
 };
 

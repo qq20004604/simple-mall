@@ -2,7 +2,7 @@ import json
 from package.decorator_csrf_setting import my_csrf_decorator
 from package.request_method_limit import post_limit, pub_limit, login_limit, order_taker_limit
 from package.response_data import get_res_json
-from .forms import CreateOrderForm, GetOrderListForm, GetOrderDetailForm, TakerOrderForm, SetTakerOrderForm
+from .forms import CreateOrderForm, GetOrderListForm, GetOrderDetailForm, TakerOrderForm, SetOrderTakerForm
 from .models import Order
 from register.models import User
 from django.db.models import Q
@@ -352,7 +352,7 @@ def set_take_order(request):
     # 加载数据
     post_data = json.loads(request.body)
     # 表单校验
-    uf = SetTakerOrderForm(post_data)
+    uf = SetOrderTakerForm(post_data)
     # 数据是否合法
     if uf.is_valid() is False:
         # 返回错误信息
@@ -397,11 +397,71 @@ def order_begin(request):
     order_data = Order.objects.filter(id=order_id)
     if len(order_data) == 0:
         return get_res_json(code=0, msg='订单错误，无法找到对应的订单')
+
+    order_data = order_data[0]
     # 设置订单候选人
-    result = order_data[0].set_order_doing(taker_id)
+    result = order_data.set_order_doing(taker_id)
     # 如果正常，则返回True
     if result is True:
-        order_data[0].save()
-        return get_res_json(code=200)
+        order_data.save()
+        return get_res_json(code=200, data={
+            'id': order_data.id
+        })
     else:
         return get_res_json(code=0, msg=result)
+
+
+# 确认订单完成
+@my_csrf_decorator()
+@post_limit
+@login_limit
+def order_end(request):
+    # 加载数据
+    post_data = json.loads(request.body)
+    # 表单校验
+    uf = TakerOrderForm(post_data)
+    # 数据是否合法
+    if uf.is_valid() is False:
+        # 返回错误信息
+        return get_res_json(code=0, msg=uf.get_form_error_msg())
+
+    # 拿取订单id
+    order_id = uf.data['id']
+    # 拿取用户 id
+    user_id = request.session.get('id')
+    user_id = str(user_id)
+    # 先拿取数据
+    order_data = Order.objects.filter(id=order_id)
+    if len(order_data) == 0:
+        return get_res_json(code=0, msg='订单错误，无法找到对应的订单')
+
+    order_data = order_data[0]
+    # 判断订单状态（不需要，后续的函数内置了判定）
+
+    # 权限判定
+    if order_data.pub_user_id != user_id and order_data.order_taker != user_id:
+        return get_res_json(code=0, msg='只有发单人或接单人，才能操纵订单状态')
+
+    # 假如是发单人
+    if order_data.pub_user_id == user_id:
+        result = order_data.set_order_done_by_pub(user_id)
+        # 如果正常，则返回True
+        if result is True:
+            order_data.save()
+            return get_res_json(code=200, data={
+                'id': order_data.id
+            })
+        else:
+            return get_res_json(code=0, msg=result)
+
+    # 假如是接单人
+    if order_data.order_taker == user_id:
+        result = order_data.set_order_done_by_taker(user_id)
+        # 如果正常，则返回True
+        if result is True:
+            order_data.save()
+            return get_res_json(code=200, data={
+                'id': order_data.id
+            })
+        else:
+            return get_res_json(code=0, msg=result)

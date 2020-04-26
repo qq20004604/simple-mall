@@ -60,7 +60,7 @@ def had_logined(request):
             'userid': request.session.get('id'),
         })
     else:
-        return get_res_json(code=0, msg='')
+        return get_res_json(code=5, msg='')
 
 
 @my_csrf_decorator()

@@ -41,6 +41,13 @@ class Root extends React.Component {
 
     componentDidMount () {
         $ajax.had_logined().then(result => {
+            if (result.code === 5) {
+                this.setState({
+                    tab: TAB_ORDER_LIST
+                })
+                window.localStorage.currentTab = TAB_ORDER_LIST
+                return;
+            }
             if (result.code === 200) {
                 this.setState({
                     username: result.data.username,
@@ -49,7 +56,6 @@ class Root extends React.Component {
                 })
             }
         })
-        window.test = this;
     }
 
     render () {
@@ -65,7 +71,8 @@ class Root extends React.Component {
         } else {
             RegisterDom = <span className={'reg-status'}
                                 key='logout'>
-                你好，{this.state.username}！<a onClick={this.logout}>点击登出</a>
+                你好，{this.state.username}！{this.state.usertype ? this.state.usertype === '01' ? `用户类型：发单人` : `用户类型：接单人` : ''}<a
+                onClick={this.logout}>点击登出</a>
             </span>
         }
 

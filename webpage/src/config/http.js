@@ -29,6 +29,8 @@ function getCookie (name) {
                 break;
             }
         }
+    } else {
+        cookieValue = window.csrftoken
     }
     return cookieValue;
 }

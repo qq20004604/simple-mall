@@ -20,8 +20,8 @@ function OrderDetailSelf (props) {
     const [orderDetail, setOrderDetail] = useState({
         'id': '',      // 订单id
         'create_date': '',     // 订单创建时间
-        'pub_user_id': '',             // 订单发布人的id
-        'pub_username': '',   // 订单发布人的username
+        'pub_user_id': '',             // 订单发单人的id
+        'pub_username': '',   // 订单发单人的username
         'title': '',
         'content': '',      // 订单描述（只取前100个字作为简略）
         'tag': '',          // 订单标签，多个标签以逗号分隔
@@ -168,6 +168,73 @@ function OrderDetailSelf (props) {
         }
     }
 
+    const [endOrderLoading, setEndOrderLoading] = useState(false)
+    const endOrder = () => {
+        setEndOrderLoading(true)
+        $ajax.endOrder({
+            id: orderDetail.id
+        }).then(result => {
+            // result = {
+            //     code: 200,
+            //     msg: '',
+            //     data: null
+            // }
+            console.log(result)
+            if (result.code === 200) {
+                notification.success({
+                    message: '已确认订单完成'
+                })
+                loadDetail()
+            } else {
+                notification.error({
+                    message: result.msg
+                })
+            }
+        }).catch(() => {
+            notification.error({
+                message: '服务器错误'
+            })
+        }).finally(() =>
+            setEndOrderLoading(false)
+        )
+    }
+    // 确认订单完成
+    const EndOrderDOM = () => {
+        const tobeDoneDOM = <Button type="primary"
+                                    loading={endOrderLoading}
+                                    onClick={endOrder}>确认订单完成</Button>
+        const waitOtherDOM = <Button disabled={true}>等待发单方确认订单完成</Button>
+
+        // 当前是进行中（20），则显示确认订单完成
+        if (orderDetail.order_status === '20') {
+            return tobeDoneDOM
+        }
+
+        // 如果当前是【接单方已确认完成】（21）
+        if (orderDetail.order_status === '21') {
+            if (orderDetail.order_taker === userid) {
+                // 当前是接单方
+                return waitOtherDOM
+            } else if (orderDetail.pub_user_id === userid) {
+                // 如果是发单方
+                return tobeDoneDOM
+            }
+            return null
+        }
+        // 如果当前是【发单方已确认完成】（22）
+        if (orderDetail.order_status === '22') {
+            if (orderDetail.order_taker === userid) {
+                // 如果是发单方
+                return tobeDoneDOM
+            } else if (orderDetail.pub_user_id === userid) {
+                // 当前是接单方
+                return waitOtherDOM
+            }
+            return null
+        }
+        return null
+    }
+
     return <div id='order-list'>
         <PageHeader
             onBack={() => setDetailId(null)}
@@ -175,10 +242,10 @@ function OrderDetailSelf (props) {
             title="查看订单详情"/>
         <Descriptions bordered>
             <Descriptions.Item label="订单名称" span={3}>{orderDetail.title}</Descriptions.Item>
+            <Descriptions.Item label="订单状态"><p
+                style={{color: 'red'}}>{orderDetail.order_status_cn}</p></Descriptions.Item>
             <Descriptions.Item label="创建人">{orderDetail.pub_username}</Descriptions.Item>
             <Descriptions.Item label="价格">{orderDetail.price}</Descriptions.Item>
-            <Descriptions.Item label="订单状态"><span
-                style={{color: 'red'}}>{orderDetail.order_status_cn}</span></Descriptions.Item>
             <Descriptions.Item label="订单标签" span={3}>
                 {
                     orderDetail.tag.length > 0
@@ -201,40 +268,43 @@ function OrderDetailSelf (props) {
                 {orderDetail.content}
             </Descriptions.Item>
             <Descriptions.Item label="订单进程" span={3}>
-                <Timeline>
-                    <Timeline.Item
-                        color={orderDetail.order_status <= 1 ? 'red' : 'blue'}>创建时间：{orderDetail.create_date}</Timeline.Item>
-                    <Timeline.Item
-                        color={orderDetail.order_status >= 10 && orderDetail.order_status < 20 ? 'red' : 'blue'}>选定接单人时间：{orderDetail.order_set_taker_date}</Timeline.Item>
-                    <Timeline.Item
-                        color={orderDetail.order_status == 20 ? 'red' : 'blue'}>接单方确认开始时间：{orderDetail.order_begin_doing_date}</Timeline.Item>
-                    <Timeline.Item
-                        color={orderDetail.order_status > 20 && orderDetail.order_status < 30 ? 'red' : 'blue'}>
-                        接单方确认完成时间：{orderDetail.order_done_by_taker_date}
+                <Timeline mode={'left'}>
+                    <Timeline.Item label={'订单创建时间'}
+                                   color={orderDetail.order_status <= 1 ? 'red' : 'blue'}>{orderDetail.create_date}</Timeline.Item>
+                    <Timeline.Item label={'选定接单人时间'}
+                                   color={orderDetail.order_status >= 10 && orderDetail.order_status < 20 ? 'red' : 'blue'}>{orderDetail.order_set_taker_date}</Timeline.Item>
+                    <Timeline.Item label={'接单方确认开始时间'}
+                                   color={orderDetail.order_status == 20 ? 'red' : 'blue'}>{orderDetail.order_begin_doing_date}</Timeline.Item>
+                    <Timeline.Item label={'确认完成时间'}
+                                   color={orderDetail.order_status > 20 && orderDetail.order_status < 30 ? 'red' : 'blue'}>
+                        接单方：{orderDetail.order_done_by_taker_date}
                         <br/>
-                        发单方确认完成时间：{orderDetail.order_scored_by_taker_date}
+                        发单方：{orderDetail.order_scored_by_taker_date}
                     </Timeline.Item>
-                    <Timeline.Item
-                        color={orderDetail.order_status >= 30 && orderDetail.order_status <= 40 ? 'red' : 'blue'}>
-                        接单方评价时间：{orderDetail.order_scored_by_taker_date}
+                    <Timeline.Item label={'评价时间'}
+                                   color={orderDetail.order_status >= 30 && orderDetail.order_status <= 40 ? 'red' : 'blue'}>
+                        接单方：{orderDetail.order_scored_by_taker_date}
                         <br/>
-                        发单方评价时间：{orderDetail.order_scored_by_pub_date}
+                        发单方：{orderDetail.order_scored_by_pub_date}
                     </Timeline.Item>
-                </Timeline>,
+                </Timeline>
             </Descriptions.Item>
             <Descriptions.Item label="接单人">{orderDetail.order_taker_username}</Descriptions.Item>
             <Descriptions.Item label="接单方取消订单时间">{orderDetail.order_canceled_by_taker_date}</Descriptions.Item>
-            <Descriptions.Item label="发单方取消订单时间" span={2}>{orderDetail.order_canceled_by_pub_date}</Descriptions.Item>
+            <Descriptions.Item label="发单方取消订单时间">{orderDetail.order_canceled_by_pub_date}</Descriptions.Item>
             <Descriptions.Item label="接单方打分">{orderDetail.taker_score_pub}</Descriptions.Item>
-            <Descriptions.Item label="发单方打分" span={2}>{orderDetail.pub_score_taker}</Descriptions.Item>
-            <Descriptions.Item label="接单方评价内容" span={3}>{orderDetail.taker_score_pub_des}</Descriptions.Item>
-            <Descriptions.Item label="发单方评价内容" span={3}>{orderDetail.pub_score_taker_des}</Descriptions.Item>
+            <Descriptions.Item label="接单方评价内容" span={2}>{orderDetail.taker_score_pub_des}</Descriptions.Item>
+            <Descriptions.Item label="发单方打分">{orderDetail.pub_score_taker}</Descriptions.Item>
+            <Descriptions.Item label="发单方评价内容" span={2}>{orderDetail.pub_score_taker_des}</Descriptions.Item>
             <Descriptions.Item label="操作">
                 {
                     SelectOrderTakerDOM()
                 }
                 {
                     BeginOrderDOM()
+                }
+                {
+                    EndOrderDOM()
                 }
             </Descriptions.Item>
         </Descriptions>

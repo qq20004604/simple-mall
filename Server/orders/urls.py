@@ -11,4 +11,5 @@ urlpatterns = [
     path('order/take/', views.take_order, name='take_order'),
     path('order/set_taker_order/', views.set_take_order, name='set_take_order'),
     path('order/begin/', views.order_begin, name='order_begin'),
+    path('order/end/', views.order_end, name='order_end'),
 ]

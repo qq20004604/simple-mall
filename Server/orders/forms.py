@@ -68,7 +68,7 @@ class GetOrderDetailForm(Form):
                             )
 
 
-# 接单
+# 接单及其他修改订单状态的接口
 class TakerOrderForm(Form):
     # 订单id
     id = forms.IntegerField(min_value=1,
@@ -81,7 +81,7 @@ class TakerOrderForm(Form):
 
 
 # 接单
-class SetTakerOrderForm(Form):
+class SetOrderTakerForm(Form):
     # 订单id
     order_id = forms.IntegerField(min_value=1,
                                   required=True,
