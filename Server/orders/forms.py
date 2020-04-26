@@ -98,3 +98,30 @@ class SetOrderTakerForm(Form):
                                      'min_value': '【接单人id】错误'
                                  }
                                  )
+
+
+# 评价
+class OrderRateForm(Form):
+    # 订单id
+    id = forms.IntegerField(min_value=1,
+                            required=True,
+                            error_messages={
+                                'required': '你没有填写【订单id】',
+                                'min_value': '【订单id】错误'
+                            }
+                            )
+    # 评价分数
+    score = forms.IntegerField(min_value=1,
+                               max_value=5,
+                               required=True,
+                               error_messages={
+                                   'required': '你没有填写【评价打分】',
+                                   'min_value': '【接单人id】错误'
+                               }
+                               )
+    # 评价内容
+    score_des = forms.CharField(max_length=255,
+                                error_messages={
+                                    'max_length': '【评价内容】最多255字'
+                                }
+                                )

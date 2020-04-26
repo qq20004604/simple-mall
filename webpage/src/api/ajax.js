@@ -49,6 +49,9 @@ const $ajax = {
     },
     endOrder (payload) {
         return post('/orders/order/end/', payload);
+    },
+    rate (payload) {
+        return post('/orders/order/rate/', payload);
     }
 };
 

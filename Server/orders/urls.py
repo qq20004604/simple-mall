@@ -12,4 +12,5 @@ urlpatterns = [
     path('order/set_taker_order/', views.set_take_order, name='set_take_order'),
     path('order/begin/', views.order_begin, name='order_begin'),
     path('order/end/', views.order_end, name='order_end'),
+    path('order/rate/', views.order_rate, name='order_rate'),
 ]

@@ -6,9 +6,9 @@
  *
  */
 import React, {useEffect, useState} from 'react';
-import {PageHeader, notification, Descriptions, Timeline, Tag, Select, Button} from 'antd';
+import {PageHeader, notification, Descriptions, Timeline, Tag, Select, Button, Rate} from 'antd';
 import $ajax from 'api/ajax.js';
-import OrderDetail from './order_detail';
+import RateComponent from './rate';
 
 const {Option} = Select;
 
@@ -203,9 +203,11 @@ function OrderDetailSelf (props) {
         const tobeDoneDOM = <Button type="primary"
                                     loading={endOrderLoading}
                                     onClick={endOrder}>确认订单完成</Button>
-        const waitOtherDOM = <Button disabled={true}>等待发单方确认订单完成</Button>
+        const waitOtherDOM = <Button disabled={true}>
+            等待{orderDetail.order_taker === userid ? '发单方' : '接单方'}确认订单完成
+        </Button>
 
-        // 当前是进行中（20），则显示确认订单完成
+        // 当前是进行中（20），则显示【确认订单完成】
         if (orderDetail.order_status === '20') {
             return tobeDoneDOM
         }
@@ -226,6 +228,44 @@ function OrderDetailSelf (props) {
             if (orderDetail.order_taker === userid) {
                 // 如果是发单方
                 return tobeDoneDOM
+            } else if (orderDetail.pub_user_id === userid) {
+                // 当前是接单方
+                return waitOtherDOM
+            }
+            return null
+        }
+        return null
+    }
+
+    // 评论
+    const RateDOM = () => {
+        const tobeRateDOM = <RateComponent orderId={orderDetail.id}
+                                           loadDetail={loadDetail}/>;
+
+        const waitOtherDOM = <Button
+            disabled={true}>等待{orderDetail.order_taker === userid ? '发单方' : '接单方'}评价</Button>
+
+        // 当前是待评价（30），则显示【评价】按钮
+        if (orderDetail.order_status === '30') {
+            return tobeRateDOM
+        }
+
+        // 如果当前是【接单方已评价】（31）
+        if (orderDetail.order_status === '31') {
+            if (orderDetail.order_taker === userid) {
+                // 当前是接单方
+                return waitOtherDOM
+            } else if (orderDetail.pub_user_id === userid) {
+                // 如果是发单方
+                return tobeRateDOM
+            }
+            return null
+        }
+        // 如果当前是【发单方已评价】（32）
+        if (orderDetail.order_status === '32') {
+            if (orderDetail.order_taker === userid) {
+                // 如果是发单方
+                return tobeRateDOM
             } else if (orderDetail.pub_user_id === userid) {
                 // 当前是接单方
                 return waitOtherDOM
@@ -292,9 +332,19 @@ function OrderDetailSelf (props) {
             <Descriptions.Item label="接单人">{orderDetail.order_taker_username}</Descriptions.Item>
             <Descriptions.Item label="接单方取消订单时间">{orderDetail.order_canceled_by_taker_date}</Descriptions.Item>
             <Descriptions.Item label="发单方取消订单时间">{orderDetail.order_canceled_by_pub_date}</Descriptions.Item>
-            <Descriptions.Item label="接单方打分">{orderDetail.taker_score_pub}</Descriptions.Item>
+            <Descriptions.Item label="接单方打分">
+                {
+                    orderDetail.taker_score_pub ? <Rate defaultValue={orderDetail.taker_score_pub}
+                                                        disabled={true}/> : null
+                }
+            </Descriptions.Item>
             <Descriptions.Item label="接单方评价内容" span={2}>{orderDetail.taker_score_pub_des}</Descriptions.Item>
-            <Descriptions.Item label="发单方打分">{orderDetail.pub_score_taker}</Descriptions.Item>
+            <Descriptions.Item label="发单方打分">
+                {
+                    orderDetail.pub_score_taker ? <Rate defaultValue={orderDetail.pub_score_taker}
+                                                        disabled={true}/> : null
+                }
+            </Descriptions.Item>
             <Descriptions.Item label="发单方评价内容" span={2}>{orderDetail.pub_score_taker_des}</Descriptions.Item>
             <Descriptions.Item label="操作">
                 {
@@ -305,6 +355,9 @@ function OrderDetailSelf (props) {
                 }
                 {
                     EndOrderDOM()
+                }
+                {
+                    RateDOM()
                 }
             </Descriptions.Item>
         </Descriptions>
