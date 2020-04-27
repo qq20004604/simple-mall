@@ -160,7 +160,7 @@ function Register (props) {
                         float: 'right'
                     }}
                     onClick={sendVerifyCode}>
-                发送验证码
+                {isSendBtnDisabled ? '已发送' : '发送验证码'}
             </Button>
         </Form.Item>
         <Form.Item label="密码"

@@ -21,6 +21,7 @@ urlpatterns = [
     path('register/', include('register.urls')),
     path('login/', include('login.urls')),
     path('orders/', include('orders.urls')),
+    path('resetpw/', include('reset_password.urls')),
     path('', include('page.urls')),
 ]
 

@@ -11,8 +11,14 @@ const $ajax = {
     sendVerifyCode (payload) {
         return post('/register/sendVerifyCode/', payload);
     },
+    sendResetPWVerifyCode (payload) {
+        return post('resetpw/sendVerifyCode/', payload);
+    },
     register (payload) {
         return post('/register/', payload);
+    },
+    resetPW (payload) {
+        return post('/resetpw/reset/', payload);
     },
     login (payload) {
         return post('/login/', payload);
