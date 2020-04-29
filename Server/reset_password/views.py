@@ -4,11 +4,12 @@ from package.request_method_limit import post_limit
 from package.response_data import get_res_json
 from .forms import ResetVerifyCodeForm
 from package.send_sms import send_vcode_sms
-from register.models import TelVerifyCode, User
+from register.models import TelVerifyCode
 from configuration.variable import SMS_SEND_INTERVAL_TIME
 
 
 # Create your views here.
+# 发送重置密码验证码
 @my_csrf_decorator()
 @post_limit
 def send_verify_code(request):
@@ -36,19 +37,21 @@ def send_verify_code(request):
             # 此时小于最大间隔
             return get_res_json(code=0, msg='每次发送验证码短信的时间间隔是 %s 秒' % SMS_SEND_INTERVAL_TIME)
 
+
     # 2、生成一条数据
     insert_data = TelVerifyCode.objects.create(tel=tel)
     # 拿到验证码
     vcode = insert_data.vcode
     # 插入到数据库
-    insert_data.save()
+    # insert_data.save()
     # 3、发送验证码。
     # 成功返回True，失败返回错误提示信息
-    send_result = send_vcode_sms(tel, vcode)
+    # send_result = send_vcode_sms(tel, vcode)
+    send_result = True
 
     if send_result is True:
         # 成功
-        return get_res_json(code=200, msg='验证码发送成功')
+        return get_res_json(code=200, msg='验证码发送成功1')
     else:
         # 失败，返回错误提示信息
         return get_res_json(code=0, msg=send_result)

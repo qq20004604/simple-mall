@@ -33,3 +33,14 @@ class ResetVerifyCode(models.Model):
     # 是否过期（有效时间 VERIFY_CODE_EXPIRE_TIME 秒）
     def was_outdated(self):
         return self.send_date < timezone.now() - datetime.timedelta(seconds=VERIFY_CODE_EXPIRE_TIME)
+
+    # 是否达到每日最大发送上限
+    def is_over_max_daily(self):
+        DAILY_MAX = 5
+        now = datetime.datetime.now()
+        start = now - datetime.timedelta(hours=23, minutes=59, seconds=59)
+        result = ResetVerifyCode.objects.filter(tel=self.tel, send_date__gt=start)
+        if len(result) > DAILY_MAX:
+            return '单日发送验证短信的条数不能超过 %s 条' % DAILY_MAX
+        else:
+            return True
