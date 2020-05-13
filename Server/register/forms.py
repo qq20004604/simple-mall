@@ -30,7 +30,7 @@ class RegisterForm(VerifyCodeForm):
                                )
     password = forms.CharField(label='password',
                                min_length=8,
-                               max_length=20,
+                               max_length=40,
                                required=True,
                                error_messages={
                                    'required': '你没有填写【密码】',

@@ -47,7 +47,7 @@ class User(models.Model):
     )
     password = models.CharField(
         max_length=40,
-        help_text='密码（8~20位）'
+        help_text='密码（8~40位）'
     )
     usertype = models.CharField(
         default='',
